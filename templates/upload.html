@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Hero Section -->
+            <div class="text-center mb-5">
+                <i class="fas fa-chart-line fa-4x text-primary mb-3"></i>
+                <h1 class="display-5 fw-bold">Transform Your Data</h1>
+                <p class="lead text-muted">
+                    Upload your CSV file and let AI generate comprehensive insights, 
+                    visualizations, and statistical analysis automatically.
+                </p>
+            </div>
+
+            <!-- Upload Form -->
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0">
+                        <i class="fas fa-upload me-2"></i>Upload Your Dataset
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <form id="uploadForm" action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data">
+                        <div class="mb-4">
+                            <label for="file" class="form-label">Select CSV File</label>
+                            <input type="file" class="form-control" id="file" name="file" accept=".csv" required>
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Maximum file size: 50MB. Only CSV files are supported.
+                            </div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg" id="uploadBtn">
+                                <i class="fas fa-cloud-upload-alt me-2"></i>
+                                Upload and Analyze
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Upload Progress -->
+                    <div id="uploadProgress" class="mt-4" style="display: none;">
+                        <div class="d-flex align-items-center">
+                            <div class="spinner-border spinner-border-sm text-primary me-3" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="fw-semibold">Processing your file...</div>
+                                <div class="small text-muted">This may take a few moments</div>
+                            </div>
+                        </div>
+                        <div class="progress mt-2">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                 role="progressbar" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features Section -->
+            <div class="row mt-5">
+                <div class="col-md-4">
+                    <div class="card h-100 border-0">
+                        <div class="card-body text-center">
+                            <i class="fas fa-broom fa-3x text-info mb-3"></i>
+                            <h5 class="card-title">Auto Data Cleaning</h5>
+                            <p class="card-text text-muted">
+                                Automatically handles missing values, duplicates, and data type conversion.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0">
+                        <div class="card-body text-center">
+                            <i class="fas fa-chart-bar fa-3x text-success mb-3"></i>
+                            <h5 class="card-title">Smart Visualizations</h5>
+                            <p class="card-text text-muted">
+                                Generate interactive charts and graphs based on your data patterns.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0">
+                        <div class="card-body text-center">
+                            <i class="fas fa-robot fa-3x text-warning mb-3"></i>
+                            <h5 class="card-title">AI Insights</h5>
+                            <p class="card-text text-muted">
+                                Get AI-powered analysis, equations, and business insights from your data.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/upload.js') }}"></script>
+{% endblock %}
