@@ -1,0 +1,2085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataMind</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/regression@2.0.1/dist/regression.min.js"></script>
+    <style>
+        :root {
+            --dark-blue: #0a192f;
+            --accent-blue: #1e4d8b;
+            --hover-blue: #2a75d6;
+            --text-light: #e6f1ff;
+            --text-muted: #8892b0;
+            --error-red: #e63946;
+            --success-green: #2a9d8f;
+            --warning-orange: #f4a261;
+            --sidebar-width: 280px;
+            --header-height: 70px;
+            --section-padding: 2rem;
+            --transition-speed: 0.3s;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Fira Code', 'Courier New', monospace;
+        }
+        
+        body {
+            background-color: var(--dark-blue);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            height: var(--header-height);
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            background-color: rgba(10, 25, 47, 0.98);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(30, 77, 139, 0.3);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: all var(--transition-speed) ease;
+        }
+        
+        .logo:hover {
+            color: var(--hover-blue);
+        }
+        
+        .logo-icon {
+            font-size: 1.8rem;
+            color: var(--hover-blue);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all var(--transition-speed) ease;
+            position: relative;
+            font-size: 0.95rem;
+        }
+        
+        .nav-links a.active {
+            color: var(--hover-blue);
+        }
+        
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--hover-blue);
+        }
+        
+        .nav-links a:hover {
+            color: var(--hover-blue);
+        }
+        
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .auth-btn {
+            padding: 0.5rem 1.2rem;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+            font-size: 0.9rem;
+        }
+        
+        .login {
+            background: transparent;
+            border: 1px solid var(--accent-blue);
+            color: var(--text-light);
+        }
+        
+        .login:hover {
+            background: rgba(30, 77, 139, 0.2);
+        }
+        
+        .signup {
+            background: var(--accent-blue);
+            border: 1px solid var(--accent-blue);
+            color: var(--text-light);
+        }
+        
+        .signup:hover {
+            background: var(--hover-blue);
+            border-color: var(--hover-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(42, 117, 214, 0.2);
+        }
+        
+        /* Main Content Container */
+        .main-container {
+            display: flex;
+            min-height: calc(100vh - var(--header-height));
+            padding-top: var(--header-height);
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            position: fixed;
+            background-color: rgba(10, 25, 47, 0.95);
+            border-right: 1px solid rgba(30, 77, 139, 0.3);
+            padding: 1.5rem 0;
+            z-index: 900;
+            backdrop-filter: blur(8px);
+            transition: transform var(--transition-speed) ease;
+            overflow-y: auto;
+        }
+        
+        .sidebar-collapsed {
+            transform: translateX(-100%);
+        }
+        
+        .sidebar-toggle {
+            position: absolute;
+            right: -40px;
+            top: 20px;
+            background: var(--accent-blue);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            z-index: 950;
+            transition: all var(--transition-speed) ease;
+        }
+        
+        .sidebar-toggle:hover {
+            background: var(--hover-blue);
+            transform: scale(1.1);
+        }
+        
+        .sidebar-header {
+            padding: 0 1.5rem 1.5rem;
+            border-bottom: 1px solid rgba(30, 77, 139, 0.3);
+            margin-bottom: 1rem;
+        }
+        
+        .dataset-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-light);
+        }
+        
+        .dataset-info {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .sidebar-menu li {
+            margin-bottom: 0.3rem;
+        }
+        
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1.5rem;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: all var(--transition-speed) ease;
+            border-left: 3px solid transparent;
+            font-size: 0.95rem;
+        }
+        
+        .sidebar-menu a:hover {
+            background-color: rgba(30, 77, 139, 0.2);
+            border-left-color: var(--hover-blue);
+        }
+        
+        .sidebar-menu a.active {
+            background-color: rgba(30, 77, 139, 0.3);
+            border-left-color: var(--hover-blue);
+            color: var(--hover-blue);
+        }
+        
+        .sidebar-menu i {
+            margin-right: 0.8rem;
+            width: 20px;
+            text-align: center;
+            font-size: 1rem;
+        }
+        
+        /* Analysis Sections */
+        .analysis-sections {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: margin var(--transition-speed) ease;
+        }
+        
+        .sidebar-collapsed + .analysis-sections {
+            margin-left: 0;
+        }
+        
+        .analysis-section {
+            padding: var(--section-padding);
+            display: none;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+        
+        .analysis-section.active {
+            display: block;
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        /* Section Navigation */
+        .section-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        
+        .section-title i {
+            color: var(--hover-blue);
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .nav-btn {
+            padding: 0.7rem 1.5rem;
+            background: var(--accent-blue);
+            color: var(--text-light);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .nav-btn:hover {
+            background: var(--hover-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(42, 117, 214, 0.2);
+        }
+        
+        .nav-btn.secondary {
+            background: rgba(30, 77, 139, 0.3);
+            border: 1px solid var(--accent-blue);
+        }
+        
+        .nav-btn.secondary:hover {
+            background: rgba(30, 77, 139, 0.5);
+        }
+        
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .dashboard-panel {
+            background-color: rgba(10, 25, 47, 0.7);
+            border: 1px solid var(--accent-blue);
+            border-radius: 10px;
+            padding: 1.5rem;
+            transition: all var(--transition-speed) ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dashboard-panel:hover {
+            border-color: var(--hover-blue);
+            box-shadow: 0 8px 20px rgba(42, 117, 214, 0.15);
+        }
+        
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid rgba(30, 77, 139, 0.3);
+        }
+        
+        .panel-title {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .panel-title i {
+            color: var(--hover-blue);
+            font-size: 1.1rem;
+        }
+        
+        .panel-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .panel-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+        
+        .panel-btn:hover {
+            background: rgba(30, 77, 139, 0.3);
+            color: var(--hover-blue);
+        }
+        
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .stat-card {
+            background: rgba(10, 25, 47, 0.5);
+            border: 1px solid var(--accent-blue);
+            border-radius: 8px;
+            padding: 1.2rem 1rem;
+            text-align: center;
+            transition: all var(--transition-speed) ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(42, 117, 214, 0.1);
+            border-color: var(--hover-blue);
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--hover-blue);
+            margin-bottom: 0.3rem;
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Data Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+        
+        .data-table th {
+            background: rgba(30, 77, 139, 0.3);
+            color: var(--hover-blue);
+            padding: 0.8rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid var(--accent-blue);
+        }
+        
+        .data-table td {
+            padding: 0.8rem;
+            border-bottom: 1px solid rgba(30, 77, 139, 0.2);
+            color: var(--text-light);
+        }
+        
+        .data-table tr:hover td {
+            background: rgba(30, 77, 139, 0.1);
+        }
+        
+        /* Graph Controls */
+        .graph-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+        
+        .control-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        
+        .graph-select {
+            padding: 0.6rem 0.8rem;
+            background-color: rgba(10, 25, 47, 0.8);
+            border: 1px solid var(--accent-blue);
+            border-radius: 6px;
+            color: var(--text-light);
+            min-width: 180px;
+            font-size: 0.9rem;
+            transition: all var(--transition-speed) ease;
+        }
+        
+        .graph-select:focus {
+            outline: none;
+            border-color: var(--hover-blue);
+            box-shadow: 0 0 0 2px rgba(42, 117, 214, 0.2);
+        }
+        
+        .graph-container {
+            height: 350px;
+            width: 100%;
+            position: relative;
+            background: rgba(10, 25, 47, 0.5);
+            border-radius: 8px;
+        }
+        
+        canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+        
+        /* Equations */
+        .equation-container {
+            background: rgba(10, 25, 47, 0.5);
+            border: 1px solid var(--accent-blue);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all var(--transition-speed) ease;
+        }
+        
+        .equation-container:hover {
+            border-color: var(--hover-blue);
+        }
+        
+        .equation-title {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--hover-blue);
+        }
+        
+        .equation {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-light);
+            overflow-x: auto;
+            padding: 0.5rem;
+            background: rgba(10, 25, 47, 0.8);
+            border-radius: 4px;
+        }
+        
+        .equation-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .metric {
+            background: rgba(10, 25, 47, 0.3);
+            border: 1px solid var(--accent-blue);
+            border-radius: 6px;
+            padding: 0.8rem;
+        }
+        
+        .metric-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.3rem;
+            display: block;
+        }
+        
+        .metric-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--hover-blue);
+        }
+        
+        /* Insights */
+        .insights-list {
+            list-style: none;
+        }
+        
+        .insight-item {
+            padding: 1.2rem;
+            border-bottom: 1px solid rgba(30, 77, 139, 0.3);
+            transition: all var(--transition-speed) ease;
+            border-radius: 6px;
+            margin-bottom: 0.8rem;
+            background: rgba(10, 25, 47, 0.5);
+        }
+        
+        .insight-item:hover {
+            background: rgba(30, 77, 139, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .insight-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        
+        .insight-header {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 0.8rem;
+        }
+        
+        .insight-icon {
+            font-size: 1.2rem;
+            color: var(--hover-blue);
+        }
+        
+        .insight-title {
+            font-weight: 600;
+            color: var(--text-light);
+        }
+        
+        .insight-text {
+            margin-bottom: 0.8rem;
+            line-height: 1.7;
+            color: var(--text-light);
+        }
+        
+        .insight-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .insight-tag {
+            background: rgba(30, 77, 139, 0.3);
+            color: var(--hover-blue);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 6px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            max-width: 350px;
+        }
+        
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .toast.success {
+            background-color: var(--success-green);
+            border-left: 4px solid var(--hover-blue);
+        }
+        
+        .toast.error {
+            background-color: var(--error-red);
+            border-left: 4px solid #ff9a9a;
+        }
+        
+        .toast.warning {
+            background-color: var(--warning-orange);
+            border-left: 4px solid #ffd166;
+        }
+        
+        .toast i {
+            font-size: 1.2rem;
+        }
+        
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            background-color: rgba(30, 77, 139, 0.3);
+            border-radius: 4px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 6px;
+            background-color: var(--hover-blue);
+            border-radius: 4px;
+            transition: width 0.4s ease;
+        }
+        
+        /* Correlation Matrix */
+        .correlation-matrix {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .correlation-matrix th, 
+        .correlation-matrix td {
+            padding: 0.5rem;
+            text-align: center;
+            border: 1px solid var(--accent-blue);
+        }
+        
+        .correlation-matrix th {
+            background-color: rgba(30, 77, 139, 0.3);
+            color: var(--hover-blue);
+        }
+        
+        .correlation-matrix td {
+            color: var(--text-light);
+        }
+        
+        .positive-correlation {
+            background-color: rgba(42, 117, 214, 0.2);
+        }
+        
+        .negative-correlation {
+            background-color: rgba(230, 57, 70, 0.2);
+        }
+        
+        /* Function Selector */
+        .function-selector {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .function-btn {
+            padding: 0.5rem 1rem;
+            background: rgba(10, 25, 47, 0.5);
+            border: 1px solid var(--accent-blue);
+            border-radius: 4px;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+        }
+        
+        .function-btn.active {
+            background: var(--accent-blue);
+            border-color: var(--hover-blue);
+        }
+        
+        .function-btn:hover {
+            background: rgba(30, 77, 139, 0.3);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .analysis-sections {
+                margin-left: 0;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .section-nav {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .nav-buttons {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .nav-btn {
+                flex: 1;
+                justify-content: center;
+            }
+            
+            .graph-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .navbar {
+                padding: 1rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fade {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+    </style>
+</head>
+<body>
+   
+    <nav class="navbar">
+    <a href="/" class="logo">
+        <i class="fas fa-brain logo-icon"></i>
+        <span>{{ app_name }}</span>
+    </a>
+  
+    <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/upload">Upload</a>
+        <a href="/analysis" class="active">Analysis</a>
+        <a href="/about">About</a>
+        <a href="/contact">Contact</a>
+    </div>
+    <div class="auth-buttons">
+        <button class="auth-btn login">{{ login_button_text }}</button>
+        <button class="auth-btn signup">{{ signup_button_text }}</button>
+    </div>
+</nav>
+
+<div class="main-container">
+    <div class="sidebar">
+        <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+        
+        <div class="sidebar-header">
+            <div class="dataset-name">{{ dataset_name }}</div>
+            <div class="dataset-info">
+                <span><i class="fas fa-database"></i> {{ record_count }} records</span>
+                <span><i class="fas fa-clock"></i> {{ last_updated }}</span>
+            </div>
+        </div>
+        
+        <ul class="sidebar-menu">
+            {% for menu_item in menu_items %}
+            <li><a href="#" class="{{ 'active' if menu_item.active else '' }}" data-section="{{ menu_item.section }}">
+                <i class="{{ menu_item.icon }}"></i> {{ menu_item.text }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="analysis-sections" id="analysisSections">
+        <!-- Overview Section -->
+        <section class="analysis-section {{ 'active' if sections.overview.active else '' }}" id="overview-section">
+            <div class="section-nav">
+                <h1 class="section-title">
+                    <i class="{{ sections.overview.icon }}"></i>
+                    {{ sections.overview.title }}
+                </h1>
+                <div class="nav-buttons">
+                    <button class="nav-btn secondary" id="prevSection" disabled>
+                        <i class="fas fa-chevron-left"></i> {{ prev_button_text }}
+                    </button>
+                    <button class="nav-btn" id="nextSection">
+                        {{ next_button_text }} <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="dashboard-grid">
+                <!-- Basic Stats Panel -->
+                <div class="dashboard-panel animate-fade">
+                    <div class="panel-header">
+                        <h2 class="panel-title"><i class="{{ panels.key_metrics.icon }}"></i> {{ panels.key_metrics.title }}</h2>
+                        <div class="panel-actions">
+                            <button class="panel-btn" title="{{ refresh_text }}"><i class="fas fa-sync-alt"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        {% for stat in stats %}
+                        <div class="stat-card animate-fade delay-{{ loop.index }}">
+                            <div class="stat-value">{{ stat.value }}</div>
+                            <div class="stat-label">{{ stat.label }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- Data Sample Panel -->
+                <div class="dashboard-panel animate-fade delay-1">
+                    <div class="panel-header">
+                        <h2 class="panel-title"><i class="{{ panels.data_sample.icon }}"></i> {{ panels.data_sample.title }}</h2>
+                        <div class="panel-actions">
+                            <button class="panel-btn" title="{{ export_text }}"><i class="fas fa-file-export"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    {% for header in data_sample.headers %}
+                                    <th>{{ header }}</th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in data_sample.rows %}
+                                <tr>
+                                    {% for cell in row %}
+                                    <td>{{ cell }}</td>
+                                    {% endfor %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Correlation Matrix Panel -->
+                <div class="dashboard-panel animate-fade delay-2">
+                    <div class="panel-header">
+                        <h2 class="panel-title"><i class="{{ panels.correlation_matrix.icon }}"></i> {{ panels.correlation_matrix.title }}</h2>
+                        <div class="panel-actions">
+                            <button class="panel-btn" title="{{ export_text }}"><i class="fas fa-file-export"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="graph-container">
+                        <table class="correlation-matrix">
+                            <thead>
+                                <tr>
+                                    <th>{{ correlation_matrix.variable_text }}</th>
+                                    {% for header in correlation_matrix.headers %}
+                                    <th>{{ header }}</th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in correlation_matrix.rows %}
+                                <tr>
+                                    <td>{{ row.variable }}</td>
+                                    {% for value in row.values %}
+                                    <td class="{{ value.class }}">{{ value.value }}</td>
+                                    {% endfor %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Key Correlations Panel -->
+                <div class="dashboard-panel animate-fade delay-3">
+                    <div class="panel-header">
+                        <h2 class="panel-title"><i class="{{ panels.key_correlations.icon }}"></i> {{ panels.key_correlations.title }}</h2>
+                        <div class="panel-actions">
+                            <button class="panel-btn" title="{{ refresh_text }}"><i class="fas fa-sync-alt"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="insights-list">
+                        {% for insight in key_insights %}
+                        <div class="insight-item">
+                            <div class="insight-header">
+                                <i class="{{ insight.icon }} insight-icon"></i>
+                                <div class="insight-title">{{ insight.title }}</div>
+                            </div>
+                            <div class="insight-text">
+                                {{ insight.text }}
+                            </div>
+                            <div class="insight-tags">
+                                {% for tag in insight.tags %}
+                                <span class="insight-tag">{{ tag }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Data Exploration Section -->
+        <section class="analysis-section {{ 'active' if sections.exploration.active else '' }}" id="exploration-section">
+            <div class="section-nav">
+                <h1 class="section-title">
+                    <i class="{{ sections.exploration.icon }}"></i>
+                    {{ sections.exploration.title }}
+                </h1>
+                <div class="nav-buttons">
+                    <button class="nav-btn secondary" id="prevSection1">
+                        <i class="fas fa-chevron-left"></i> {{ prev_button_text }}
+                    </button>
+                    <button class="nav-btn" id="nextSection1">
+                        {{ next_button_text }} <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="dashboard-grid">
+                <!-- Distribution Analysis Panel -->
+                <div class="dashboard-panel animate-fade">
+                    <div class="panel-header">
+                        <h2 class="panel-title"><i class="{{ panels.distribution_analysis.icon }}"></i> {{ panels.distribution_analysis.title }}</h2>
+                        <div class="panel-actions">
+                            <select class="graph-select" style="width: 150px;">
+                                {% for option in distribution_options %}
+                                <option {{ 'selected' if option.selected else '' }}>{{ option.text }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="graph-container">
+                        <canvas id="distributionChart"></canvas>
+                    </div>
+                    
+                    <div class="equation-metrics" style="margin-top: 1rem; grid-template-columns: repeat(2, 1fr);">
+                        {% for metric in distribution_metrics %}
+                        <div class="metric">
+                            <span class="metric-label">{{ metric.label }}</span>
+                            <span class="metric-value">{{ metric.value }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- Outliers Detection Panel -->
+                <div class="dashboard-panel animate-fade delay-1">
+                    <div class="panel-header">
+                        <h2 class="panel-title"><i class="{{ panels.outliers_detection.icon }}"></i> {{ panels.outliers_detection.title }}</h2>
+                        <div class="panel-actions">
+                            <button class="panel-btn" title="{{ fix_issues_text }}"><i class="fas fa-wrench"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="graph-container">
+                        <canvas id="outliersChart"></canvas>
+                    </div>
+                    
+                    <div style="margin-top: 1rem;">
+                        <div class="data-type-item">
+                            <span class="data-type-name">
+                                <i class="fas fa-exclamation-circle"></i>
+                                {{ potential_outliers_text }}
+                            </span>
+                            <span class="data-type-count">{{ outlier_count }} records</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Data Quality Panel -->
+                <div class="dashboard-panel animate-fade delay-2">
+                    <div class="panel-header">
+                        <h2 class="panel-title"><i class="{{ panels.data_quality.icon }}"></i> {{ panels.data_quality.title }}</h2>
+                        <div class="panel-actions">
+                            <button class="panel-btn" title="{{ export_text }}"><i class="fas fa-file-export"></i></button>
+                        </div>
+                    </div>
+                    
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                {% for header in quality_report.headers %}
+                                <th>{{ header }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in quality_report.rows %}
+                            <tr>
+                                {% for cell in row %}
+                                <td>{{ cell }}</td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Statistical Tests Panel -->
+                <div class="dashboard-panel animate-fade delay-3">
+                    <div class="panel-header">
+                        <h2 class="panel-title"><i class="{{ panels.statistical_tests.icon }}"></i> {{ panels.statistical_tests.title }}</h2>
+                        <div class="panel-actions">
+                            <button class="panel-btn" title="{{ run_tests_text }}"><i class="fas fa-play"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="insights-list">
+                        {% for test in statistical_tests %}
+                        <div class="insight-item">
+                            <div class="insight-header">
+                                <div class="insight-title">{{ test.title }}</div>
+                            </div>
+                            <div class="insight-text">
+                                {{ test.result }}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Visualization Section -->
+        <section class="analysis-section {{ 'active' if sections.visualization.active else '' }}" id="visualization-section">
+            <div class="section-nav">
+                <h1 class="section-title">
+                    <i class="{{ sections.visualization.icon }}"></i>
+                    {{ sections.visualization.title }}
+                </h1>
+                <div class="nav-buttons">
+                    <button class="nav-btn secondary" id="prevSection2">
+                        <i class="fas fa-chevron-left"></i> {{ prev_button_text }}
+                    </button>
+                    <button class="nav-btn" id="nextSection2">
+                        {{ next_button_text }} <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="dashboard-grid">
+                <!-- Visualization Controls Panel -->
+                <div class="dashboard-panel animate-fade">
+                    <div class="panel-header">
+                        <h2 class="panel-title"><i class="{{ panels.visualization_controls.icon }}"></i> {{ panels.visualization_controls.title }}</h2>
+                        <div class="panel-actions">
+                            <button class="panel-btn" title="{{ save_preset_text }}"><i class="fas fa-save"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="graph-controls">
+                        <div class="control-group">
+                            <label class="control-label">{{ chart_type_text }}</label>
+                            <select class="graph-select" id="chartTypeSelect">
+                                {% for type in chart_types %}
+                                <option value="{{ type.value }}" {{ 'selected' if type.selected else '' }}>{{ type.text }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label">{{ x_axis_text }}</label>
+                            <select class="graph-select" id="xAxisSelect">
+                                {% for axis in x_axes %}
+                                <option value="{{ axis.value }}" {{ 'selected' if axis.selected else '' }}>{{ axis.text }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label">{{ y_axis_text }}</label>
+                            <select class="graph-select" id="yAxisSelect">
+                                {% for axis in y_axes %}
+                                <option value="{{ axis.value }}" {{ 'selected' if axis.selected else '' }}>{{ axis.text }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label">{{ function_type_text }}</label>
+                            <div class="function-selector">
+                                {% for func in function_types %}
+                                <button class="function-btn {{ 'active' if func.active else '' }}" data-function="{{ func.value }}">{{ func.text }}</button>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <button class="nav-btn" id="generateChart" style="align-self: flex-end;">
+                            <i class="fas fa-play"></i> {{ generate_text }}
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Main Visualization Panel -->
+                <div class="dashboard-panel animate-fade delay-1" style="grid-column: span 2;">
+                    <div class="panel-header">
+                        <h2 class="panel-title"><i class="{{ panels.main_visualization.icon }}"></i> {{ panels.main_visualization.title }}</h2>
+                        <div class="panel-actions">
+                            <button class="panel-btn" title="{{ export_text }}"><i class="fas fa-download"></i></button>
+                            <button class="panel-btn" title="{{ fullscreen_text }}"><i class="fas fa-expand"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="graph-container">
+                        <canvas id="mainVisualizationChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Suggested Visualizations Panel -->
+                <div class="dashboard-panel animate-fade delay-2">
+                    <div class="panel-header">
+                        <h2 class="panel-title"><i class="{{ panels.suggested_visualizations.icon }}"></i> {{ panels.suggested_visualizations.title }}</h2>
+                        <div class="panel-actions">
+                            <button class="panel-btn" title="{{ refresh_text }}"><i class="fas fa-sync-alt"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="insights-list">
+                        {% for suggestion in suggested_visualizations %}
+                        <div class="insight-item">
+                            <div class="insight-header">
+                                <i class="{{ suggestion.icon }} insight-icon"></i>
+                                <div class="insight-title">{{ suggestion.title }}</div>
+                            </div>
+                            <div class="insight-text">
+                                {{ suggestion.description }}
+                            </div>
+                            <div class="insight-tags">
+                                {% for tag in suggestion.tags %}
+                                <span class="insight-tag">{{ tag }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- 3D Visualization Panel -->
+                <div class="dashboard-panel animate-fade delay-3" style="grid-column: span 2;">
+                    <div class="panel-header">
+                        <h2 class="panel-title"><i class="{{ panels.three_d_visualization.icon }}"></i> {{ panels.three_d_visualization.title }}</h2>
+                        <div class="panel-actions">
+                            <select class="graph-select" style="width: 180px;">
+                                {% for option in three_d_options %}
+                                <option>{{ option }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="graph-container" style="height: 400px; display: flex; align-items: center; justify-content: center;">
+                        <div style="text-align: center; color: var(--text-muted);">
+                            <i class="fas fa-cube" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                            <p>{{ three_d_placeholder_text }}</p>
+                            <p>{{ three_d_axes_text }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Equations Section -->
+        <section class="analysis-section {{ 'active' if sections.equations.active else '' }}" id="equations-section">
+            <div class="section-nav">
+                <h1 class="section-title">
+                    <i class="{{ sections.equations.icon }}"></i>
+                    {{ sections.equations.title }}
+                </h1>
+                <div class="nav-buttons">
+                    <button class="nav-btn secondary" id="prevSection3">
+                        <i class="fas fa-chevron-left"></i> {{ prev_button_text }}
+                    </button>
+                    <button class="nav-btn" id="nextSection3">
+                        {{ next_button_text }} <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="dashboard-grid">
+                <!-- Regression Analysis Panel -->
+                <div class="dashboard-panel animate-fade" style="grid-column: span 2;">
+                    <div class="panel-header">
+                        <h2 class="panel-title"><i class="{{ panels.regression_analysis.icon }}"></i> {{ panels.regression_analysis.title }}</h2>
+                        <div class="panel-actions">
+                            <button class="panel-btn" title="{{ run_analysis_text }}"><i class="fas fa-play"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="graph-controls">
+                        <div class="control-group">
+                            <label class="control-label">{{ target_text }}</label>
+                            <select class="graph-select" id="regressionTarget">
+                                {% for target in regression_targets %}
+                                <option value="{{ target.value }}" {{ 'selected' if target.selected else '' }}>{{ target.text }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label">{{ predictors_text }}</label>
+                            <select class="graph-select" id="regressionPredictors" multiple style="height: auto;">
+                                {% for predictor in regression_predictors %}
+                                <option value="{{ predictor.value }}" {{ 'selected' if predictor.selected else '' }}>{{ predictor.text }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label">{{ model_type_text }}</label>
+                            <select class="graph-select" id="regressionType">
+                                {% for model in regression_models %}
+                                <option value="{{ model.value }}">{{ model.text }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="equation-container" style="margin-top: 1.5rem;">
+                        <div class="equation-title">{{ regression_equation.title }}</div>
+                        <div class="equation">
+                            \[ {{ regression_equation.latex }} \]
+                        </div>
+                        <div class="equation-metrics">
+                            {% for metric in regression_metrics %}
+                            <div class="metric">
+                                <span class="metric-label">{{ metric.label }}</span>
+                                <span class="metric-value">{{ metric.value }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <div class="graph-container" style="height: 250px; margin-top: 1.5rem;">
+                        <canvas id="regressionChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Mortgage Payment Formula -->
+                <div class="dashboard-panel animate-fade delay-1">
+                    <div class="panel-header">
+                        <h2 class="panel-title"><i class="{{ panels.payment_formula.icon }}"></i> {{ panels.payment_formula.title }}</h2>
+                        <div class="panel-actions">
+                            <button class="panel-btn" title="{{ explain_text }}"><i class="fas fa-info-circle"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="equation-container">
+                        <div class="equation-title">{{ standard_formula.title }}</div>
+                        <div class="equation">
+                            \[ {{ standard_formula.latex }} \]
+                        </div>
+                        <div class="equation-explanation" style="margin-top: 1rem; font-size: 0.9rem;">
+                            {{ standard_formula.explanation }}
+                        </div>
+                    </div>
+                    
+                    <div class="equation-container" style="margin-top: 1.5rem;">
+                        <div class="equation-title">{{ simplified_formula.title }}</div>
+                        <div class="equation">
+                            \[ {{ simplified_formula.latex }} \]
+                        </div>
+                        <div class="equation-explanation" style="margin-top: 1rem; font-size: 0.9rem;">
+                            {{ simplified_formula.explanation }}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Classification Model -->
+                <div class="dashboard-panel animate-fade delay-2">
+                    <div class="panel-header">
+                        <h2 class="panel-title"><i class="{{ panels.classification_model.icon }}"></i> {{ panels.classification_model.title }}</h2>
+                        <div class="panel-actions">
+                            <button class="panel-btn" title="{{ run_model_text }}"><i class="fas fa-play"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="graph-controls">
+                        <div class="control-group">
+                            <label class="control-label">{{ income_threshold_text }}</label>
+                            <input type="number" class="graph-select" value="{{ income_threshold_default }}" id="incomeThreshold">
+                        </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label">{{ dti_ratio_text }}</label>
+                            <input type="number" class="graph-select" value="{{ dti_ratio_default }}" step="0.01" id="dtiRatio">
+                        </div>
+                    </div>
+                    
+                    <div class="equation-container" style="margin-top: 1.5rem;">
+                        <div class="equation-title">{{ classification_metrics.title }}</div>
+                        <div class="equation-metrics" style="grid-template-columns: repeat(2, 1fr);">
+                            {% for metric in classification_metrics_list %}
+                            <div class="metric">
+                                <span class="metric-label">{{ metric.label }}</span>
+                                <span class="metric-value">{{ metric.value }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="equation-explanation" style="margin-top: 1rem; font-size: 0.9rem;">
+                            {{ classification_explanation }}
+                        </div>
+                    </div>
+                    
+                    <div class="graph-container" style="height: 200px; margin-top: 1.5rem;">
+                        <canvas id="classificationChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Interactive Calculator -->
+                <div class="dashboard-panel animate-fade delay-3" style="grid-column: span 2;">
+                    <div class="panel-header">
+                        <h2 class="panel-title"><i class="{{ panels.mortgage_calculator.icon }}"></i> {{ panels.mortgage_calculator.title }}</h2>
+                        <div class="panel-actions">
+                            <button class="panel-btn" title="{{ calculate_text }}"><i class="fas fa-equals"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="graph-controls" style="grid-template-columns: repeat(4, 1fr);">
+                        <div class="control-group">
+                            <label class="control-label">{{ home_value_text }}</label>
+                            <input type="number" class="graph-select" value="{{ default_home_value }}" id="calcHomeValue">
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">{{ down_payment_text }}</label>
+                            <input type="number" class="graph-select" value="{{ default_down_payment }}" id="calcDownPayment">
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">{{ interest_rate_text }}</label>
+                            <input type="number" class="graph-select" value="{{ default_interest_rate }}" step="0.1" id="calcInterestRate">
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">{{ loan_term_text }}</label>
+                            <select class="graph-select" id="calcLoanTerm">
+                                {% for term in loan_terms %}
+                                <option value="{{ term.value }}" {{ 'selected' if term.selected else '' }}>{{ term.text }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="equation-container" style="margin-top: 1.5rem; text-align: center;">
+                        <div class="equation-title">{{ payment_breakdown_text }}</div>
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 1rem;">
+                            {% for breakdown in payment_breakdowns %}
+                            <div class="metric">
+                                <span class="metric-label">{{ breakdown.label }}</span>
+                                <span class="metric-value">{{ breakdown.value }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="confidence-bar" style="margin: 1rem auto; width: 80%;">
+                            <div class="confidence-fill" style="width: {{ confidence_percentage }}%;"></div>
+                        </div>
+                        <div class="confidence-value">{{ confidence_text }}</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Insights Section -->
+        <section class="analysis-section {{ 'active' if sections.insights.active else '' }}" id="insights-section">
+            <div class="section-nav">
+                <h1 class="section-title">
+                    <i class="{{ sections.insights.icon }}"></i>
+                    {{ sections.insights.title }}
+                </h1>
+                <div class="nav-buttons">
+                    <button class="nav-btn secondary" id="prevSection4">
+                        <i class="fas fa-chevron-left"></i> {{ prev_button_text }}
+                    </button>
+                    <button class="nav-btn" id="nextSection4" disabled>
+                        {{ next_button_text }} <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="dashboard-grid">
+                <!-- Key Findings Panel -->
+                <div class="dashboard-panel animate-fade" style="grid-column: span 2;">
+                    <div class="panel-header">
+                        <h2 class="panel-title"><i class="{{ panels.key_findings.icon }}"></i> {{ panels.key_findings.title }}</h2>
+                        <div class="panel-actions">
+                            <button class="panel-btn" title="{{ export_text }}"><i class="fas fa-file-export"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="insights-list">
+                        {% for finding in key_findings %}
+                        <div class="insight-item">
+                            <div class="insight-header">
+                                <i class="{{ finding.icon }} insight-icon"></i>
+                                <div class="insight-title">{{ finding.title }}</div>
+                            </div>
+                            <div class="insight-text">
+                                {{ finding.text }}
+                            </div>
+                            <div class="insight-tags">
+                                {% for tag in finding.tags %}
+                                <span class="insight-tag">{{ tag }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- Recommendations Panel -->
+                <div class="dashboard-panel animate-fade delay-1">
+                    <div class="panel-header">
+                        <h2 class="panel-title"><i class="{{ panels.recommendations.icon }}"></i> {{ panels.recommendations.title }}</h2>
+                        <div class="panel-actions">
+                            <button class="panel-btn" title="{{ export_text }}"><i class="fas fa-file-export"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="insights-list">
+                        {% for recommendation in recommendations %}
+                        <div class="insight-item">
+                            <div class="insight-header">
+                                <div class="insight-title">{{ recommendation.title }}</div>
+                            </div>
+                            <div class="insight-text">
+                                {{ recommendation.text }}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- Action Items Panel -->
+                <div class="dashboard-panel animate-fade delay-2">
+                    <div class="panel-header">
+                        <h2 class="panel-title"><i class="{{ panels.action_items.icon }}"></i> {{ panels.action_items.title }}</h2>
+                        <div class="panel-actions">
+                            <button class="panel-btn" title="{{ add_item_text }}"><i class="fas fa-plus"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="insights-list">
+                        {% for action_group in action_items %}
+                        <div class="insight-item">
+                            <div class="insight-header">
+                                <div class="insight-title">{{ action_group.title }}</div>
+                            </div>
+                            {% for item in action_group.items %}
+                            <div class="insight-text">
+                                <input type="checkbox" id="task{{ loop.index }}" {{ 'checked' if item.checked else '' }}>
+                                <label for="task{{ loop.index }}">{{ item.text }}</label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- Final Report Panel -->
+                <div class="dashboard-panel animate-fade delay-3" style="grid-column: span 2;">
+                    <div class="panel-header">
+                        <h2 class="panel-title"><i class="{{ panels.final_report.icon }}"></i> {{ panels.final_report.title }}</h2>
+                        <div class="panel-actions">
+                            <button class="nav-btn"><i class="fas fa-file-pdf"></i> {{ pdf_text }}</button>
+                            <button class="nav- btn secondary"><i class="fas fa-file-code"></i> {{ jupyter_text }}</button>
+                        </div>
+                    </div>
+                    
+                    <div class="graph-controls">
+                        <div class="control-group">
+                            <label class="control-label">{{ report_type_text }}</label>
+                            <select class="graph-select">
+                                {% for report in report_types %}
+                                <option>{{ report }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label class="control-label">{{ include_text }}</label>
+                            <select class="graph-select" multiple style="height: auto;">
+                                {% for option in report_options %}
+                                <option {{ 'selected' if option.selected else '' }}>{{ option.text }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button class="nav-btn" style="margin-top: 1.5rem; width: 100%;">
+                        <i class="fas fa-cogs"></i> {{ generate_custom_report_text }}
+                    </button>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<!-- Toast Notification -->
+<div class="toast" id="toast">
+    <i class="fas fa-check-circle"></i>
+    <span>{{ toast_message }}</span>
+</div>
+
+    <script>
+        // Initialize with data from Flask backend
+const mortgageData = JSON.parse('{{ data_sample.rows|tojson|safe }}');
+const regressionModel = {
+    coefficients: {
+        home_value: {{ regression_analysis.linear.coefficients['House Value ($)'] }},
+        loan_amount: {{ regression_analysis.linear.coefficients['Loan Amount ($)'] }},
+        interest_rate: {{ regression_analysis.linear.coefficients['Interest Rate (%)'] }},
+        down_payment: {{ regression_analysis.linear.coefficients['Down Payment (%)'] }}
+    },
+    intercept: {{ regression_analysis.linear.intercept }},
+    metrics: {
+        r2: {{ regression_analysis.metrics.r2 }},
+        rmse: {{ regression_analysis.metrics.rmse }},
+        mae: {{ regression_analysis.metrics.mae }}
+    }
+};
+
+const stats = {
+    skewness: {{ stats.payment_skewness }},
+    kurtosis: {{ stats.payment_kurtosis }},
+    std_dev: {{ stats.std_payment }},
+    payment_range: {{ stats.payment_range }}
+};
+
+// DOM Elements
+const sidebarToggle = document.getElementById('sidebarToggle');
+const sidebar = document.querySelector('.sidebar');
+const sections = document.querySelectorAll('.analysis-section');
+const toast = document.getElementById('toast');
+const functionBtns = document.querySelectorAll('.function-btn');
+
+// Current section index
+let currentSection = 0;
+let currentFunction = 'linear';
+let currentChartType = 'scatter';
+
+// Initialize charts with backend data
+function initializeCharts() {
+    // Distribution Chart
+    const distCtx = document.getElementById('distributionChart').getContext('2d');
+    new Chart(distCtx, {
+        type: 'boxplot',
+        data: {
+            labels: ['Monthly Payment'],
+            datasets: [{
+                label: 'Payment Distribution',
+                backgroundColor: 'rgba(42, 117, 214, 0.5)',
+                borderColor: 'rgba(42, 117, 214, 1)',
+                borderWidth: 1,
+                itemRadius: 0,
+                data: [
+                    mortgageData.map(item => parseFloat(item['Monthly Payment ($)'].replace(/[^0-9.-]+/g,"")))
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: 'Monthly Payment Distribution ($)'
+                }
+            }
+        }
+    });
+
+    // Outliers Chart
+    const outliersCtx = document.getElementById('outliersChart').getContext('2d');
+    new Chart(outliersCtx, {
+        type: 'scatter',
+        data: {
+            datasets: [{
+                label: 'Monthly Payments',
+                data: mortgageData.map(item => ({
+                    x: parseFloat(item['House Value ($)'].replace(/[^0-9.-]+/g,"")),
+                    y: parseFloat(item['Monthly Payment ($)'].replace(/[^0-9.-]+/g,""))
+                })),
+                backgroundColor: 'rgba(42, 117, 214, 0.7)',
+                borderColor: 'rgba(42, 117, 214, 1)',
+                borderWidth: 1,
+                pointRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: 'Payment vs Home Value'
+                }
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Home Value ($)'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Monthly Payment ($)'
+                    }
+                }
+            }
+        }
+    });
+
+    // Main Visualization Chart
+    const mainChartCtx = document.getElementById('mainVisualizationChart').getContext('2d');
+    window.mainChart = new Chart(mainChartCtx, {
+        type: 'scatter',
+        data: {
+            datasets: [{
+                label: 'Actual Data',
+                data: mortgageData.map(item => ({
+                    x: parseFloat(item['House Value ($)'].replace(/[^0-9.-]+/g,"")),
+                    y: parseFloat(item['Monthly Payment ($)'].replace(/[^0-9.-]+/g,""))
+                })),
+                backgroundColor: 'rgba(42, 117, 214, 0.7)',
+                borderColor: 'rgba(42, 117, 214, 1)',
+                borderWidth: 1,
+                pointRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Home Value vs Monthly Payment'
+                }
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Home Value ($)'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Monthly Payment ($)'
+                    }
+                }
+            }
+        }
+    });
+
+    // Regression Chart
+    const regCtx = document.getElementById('regressionChart').getContext('2d');
+    window.regChart = new Chart(regCtx, {
+        type: 'scatter',
+        data: {
+            datasets: [{
+                label: 'Actual',
+                data: mortgageData.map(item => ({
+                    x: parseFloat(item['House Value ($)'].replace(/[^0-9.-]+/g,"")),
+                    y: parseFloat(item['Monthly Payment ($)'].replace(/[^0-9.-]+/g,""))
+                })),
+                backgroundColor: 'rgba(42, 117, 214, 0.7)'
+            }, {
+                label: 'Predicted',
+                data: mortgageData.map(item => ({
+                    x: parseFloat(item['House Value ($)'].replace(/[^0-9.-]+/g,"")),
+                    y: predictPayment(
+                        parseFloat(item['House Value ($)'].replace(/[^0-9.-]+/g,"")),
+                        parseFloat(item['Loan Amount ($)'].replace(/[^0-9.-]+/g,"")),
+                        parseFloat(item['Interest Rate (%)'].replace(/[^0-9.-]+/g,""))
+                    )
+                })),
+                backgroundColor: 'rgba(230, 57, 70, 0.7)',
+                type: 'line',
+                borderColor: 'rgba(230, 57, 70, 1)',
+                borderWidth: 2,
+                pointRadius: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                title: {
+                    display: true,
+                    text: `Actual vs Predicted Payments (R²=${regressionModel.metrics.r2.toFixed(3)})`
+                }
+            }
+        }
+    });
+
+    // Classification Chart
+    const classCtx = document.getElementById('classificationChart').getContext('2d');
+    new Chart(classCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Affordable', 'Marginal', 'Unaffordable'],
+            datasets: [{
+                data: [65, 15, 20], // Placeholder - would come from backend in real implementation
+                backgroundColor: [
+                    'rgba(42, 117, 214, 0.7)',
+                    'rgba(244, 162, 97, 0.7)',
+                    'rgba(230, 57, 70, 0.7)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Affordability Classification'
+                }
+            }
+        }
+    });
+}
+
+// Prediction function using regression coefficients
+function predictPayment(homeValue, loanAmount, interestRate) {
+    return (homeValue * regressionModel.coefficients.home_value + 
+            loanAmount * regressionModel.coefficients.loan_amount + 
+            interestRate * regressionModel.coefficients.interest_rate + 
+            regressionModel.intercept);
+}
+
+// Event Listeners
+sidebarToggle.addEventListener('click', () => {
+    sidebar.classList.toggle('sidebar-collapsed');
+    sidebarToggle.querySelector('i').classList.toggle('fa-chevron-right');
+    sidebarToggle.querySelector('i').classList.toggle('fa-chevron-left');
+});
+
+// Section Navigation
+document.querySelectorAll('[data-section]').forEach(item => {
+    item.addEventListener('click', function() {
+        const sectionId = this.getAttribute('data-section');
+        
+        // Hide all sections
+        sections.forEach(section => {
+            section.classList.remove('active');
+        });
+        
+        // Show selected section
+        document.getElementById(`${sectionId}-section`).classList.add('active');
+        
+        // Update sidebar menu
+        document.querySelectorAll('.sidebar-menu a').forEach(link => {
+            link.classList.remove('active');
+        });
+        this.classList.add('active');
+        
+        // Update current section index
+        const sectionsArray = Array.from(sections);
+        currentSection = sectionsArray.findIndex(s => s.id === `${sectionId}-section`);
+        
+        // Update nav buttons
+        updateNavButtons();
+    });
+});
+
+// Next/Previous Section Navigation
+document.querySelectorAll('[id^="nextSection"], [id^="prevSection"]').forEach(button => {
+    button.addEventListener('click', function() {
+        const isNext = this.id.startsWith('next');
+        
+        // Hide current section
+        sections[currentSection].classList.remove('active');
+        
+        // Update current section
+        currentSection = isNext ? 
+            Math.min(currentSection + 1, sections.length - 1) : 
+            Math.max(currentSection - 1, 0);
+        
+        // Show new section
+        sections[currentSection].classList.add('active');
+        
+        // Update sidebar menu
+        document.querySelectorAll('.sidebar-menu a').forEach((link, index) => {
+            link.classList.toggle('active', index === currentSection);
+        });
+        
+        // Update nav buttons
+        updateNavButtons();
+    });
+});
+
+// Function selector
+functionBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+        functionBtns.forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        currentFunction = this.getAttribute('data-function');
+        updateMainChart();
+    });
+});
+
+// Chart type selector
+document.getElementById('chartTypeSelect').addEventListener('change', function() {
+    currentChartType = this.value;
+    updateMainChart();
+});
+
+// Generate chart button
+document.getElementById('generateChart').addEventListener('click', updateMainChart);
+
+// Update main chart based on selections
+function updateMainChart() {
+    const xAxis = document.getElementById('xAxisSelect').value;
+    const yAxis = document.getElementById('yAxisSelect').value;
+    
+    // Update chart type
+    window.mainChart.config.type = currentChartType;
+    
+    // Update data
+    window.mainChart.data.datasets[0].data = mortgageData.map(item => ({
+        x: parseFloat(item[xAxis].replace(/[^0-9.-]+/g,"")),
+        y: parseFloat(item[yAxis].replace(/[^0-9.-]+/g,""))
+    }));
+    
+    // Add regression line if selected
+    if (currentChartType === 'scatter' && currentFunction !== 'none') {
+        if (window.mainChart.data.datasets.length === 1) {
+            window.mainChart.data.datasets.push({
+                label: 'Regression Line',
+                data: [],
+                backgroundColor: 'rgba(230, 57, 70, 0.7)',
+                borderColor: 'rgba(230, 57, 70, 1)',
+                borderWidth: 2,
+                pointRadius: 0,
+                type: 'line'
+            });
+        }
+        
+        // Calculate min/max for regression line
+        const xValues = mortgageData.map(item => parseFloat(item[xAxis].replace(/[^0-9.-]+/g,"")));
+        const minX = Math.min(...xValues);
+        const maxX = Math.max(...xValues);
+        
+        // Use backend regression model for prediction
+        const lineData = [
+            { 
+                x: minX, 
+                y: predictPayment(
+                    xAxis === 'House Value ($)' ? minX : regressionModel.coefficients.home_value,
+                    xAxis === 'Loan Amount ($)' ? minX : regressionModel.coefficients.loan_amount,
+                    xAxis === 'Interest Rate (%)' ? minX : regressionModel.coefficients.interest_rate
+                )
+            },
+            { 
+                x: maxX, 
+                y: predictPayment(
+                    xAxis === 'House Value ($)' ? maxX : regressionModel.coefficients.home_value,
+                    xAxis === 'Loan Amount ($)' ? maxX : regressionModel.coefficients.loan_amount,
+                    xAxis === 'Interest Rate (%)' ? maxX : regressionModel.coefficients.interest_rate
+                )
+            }
+        ];
+        
+        window.mainChart.data.datasets[1].data = lineData;
+        window.mainChart.data.datasets[1].label = `${currentFunction} regression (R²=${regressionModel.metrics.r2.toFixed(3)})`;
+    } else {
+        // Remove regression line if not needed
+        if (window.mainChart.data.datasets.length > 1) {
+            window.mainChart.data.datasets.pop();
+        }
+    }
+    
+    // Update axis labels
+    const xLabel = document.getElementById('xAxisSelect').options[document.getElementById('xAxisSelect').selectedIndex].text;
+    const yLabel = document.getElementById('yAxisSelect').options[document.getElementById('yAxisSelect').selectedIndex].text;
+    
+    window.mainChart.options.scales.x.title.text = xLabel;
+    window.mainChart.options.scales.y.title.text = yLabel;
+    window.mainChart.options.plugins.title.text = `${xLabel} vs ${yLabel}`;
+    
+    window.mainChart.update();
+}
+
+// Update nav buttons state
+function updateNavButtons() {
+    document.querySelectorAll('[id^="prevSection"]').forEach(btn => {
+        btn.disabled = currentSection === 0;
+    });
+    
+    document.querySelectorAll('[id^="nextSection"]').forEach(btn => {
+        btn.disabled = currentSection === sections.length - 1;
+    });
+}
+
+// Show toast notification
+function showToast(message, type = 'success') {
+    toast.querySelector('span').textContent = message;
+    toast.className = `toast ${type}`;
+    toast.classList.add('show');
+    
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 3000);
+}
+
+// Mortgage calculator functionality
+document.getElementById('calcHomeValue').addEventListener('input', updateMortgageCalculation);
+document.getElementById('calcDownPayment').addEventListener('input', updateMortgageCalculation);
+document.getElementById('calcInterestRate').addEventListener('input', updateMortgageCalculation);
+document.getElementById('calcLoanTerm').addEventListener('change', updateMortgageCalculation);
+
+function updateMortgageCalculation() {
+    const homeValue = parseFloat(document.getElementById('calcHomeValue').value) || 0;
+    const downPaymentPercent = parseFloat(document.getElementById('calcDownPayment').value) || 0;
+    const interestRate = parseFloat(document.getElementById('calcInterestRate').value) || 0;
+    const loanTerm = parseInt(document.getElementById('calcLoanTerm').value) || 30;
+    
+    const downPayment = homeValue * (downPaymentPercent / 100);
+    const loanAmount = homeValue - downPayment;
+    const monthlyRate = interestRate / 100 / 12;
+    const numPayments = loanTerm * 12;
+    
+    // Calculate monthly payment using standard formula
+    let monthlyPayment = 0;
+    if (monthlyRate > 0) {
+        monthlyPayment = loanAmount * 
+            (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / 
+            (Math.pow(1 + monthlyRate, numPayments) - 1);
+    } else {
+        monthlyPayment = loanAmount / numPayments;
+    }
+    
+    // Also calculate using our regression model
+    const modelPayment = predictPayment(homeValue, loanAmount, interestRate);
+    
+    // Update UI with calculated values
+    document.querySelectorAll('.metric-value')[0].textContent = `$${monthlyPayment.toFixed(0)}`;
+    document.querySelectorAll('.metric-value')[1].textContent = `$${(monthlyPayment * 0.4).toFixed(0)}`;
+    document.querySelectorAll('.metric-value')[2].textContent = `$${(monthlyPayment * 0.6).toFixed(0)}`;
+    document.querySelectorAll('.metric-value')[3].textContent = `$${(monthlyPayment * 0.6 * numPayments).toFixed(0)}`;
+    
+    // Calculate confidence based on how close we are to known data points
+    const similarPayments = mortgageData.filter(item => 
+        Math.abs(parseFloat(item['House Value ($)'].replace(/[^0-9.-]+/g,"")) - homeValue) < 50000
+    );
+    
+    let confidence = 70; // Base confidence
+    if (similarPayments.length > 0) {
+        const avgSimilarPayment = similarPayments.reduce((sum, item) => 
+            sum + parseFloat(item['Monthly Payment ($)'].replace(/[^0-9.-]+/g,"")), 0) / similarPayments.length;
+        const paymentDiff = Math.abs(monthlyPayment - avgSimilarPayment) / avgSimilarPayment;
+        confidence = Math.max(70, 100 - (paymentDiff * 100));
+    }
+    
+    document.querySelector('.confidence-fill').style.width = `${confidence}%`;
+    document.querySelector('.confidence-value').textContent = 
+        `${Math.round(confidence)}% Confidence (based on similar profiles)`;
+}
+
+// Initialize the app
+document.addEventListener('DOMContentLoaded', () => {
+    initializeCharts();
+    updateNavButtons();
+    updateMortgageCalculation();
+    
+    // Show welcome toast
+    setTimeout(() => {
+        showToast('Mortgage analysis loaded successfully!');
+    }, 1000);
+});
+    </script>
+</body>
+</html>
