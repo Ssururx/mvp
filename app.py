@@ -36,16 +36,15 @@ def calculate_descriptive_stats():
     """Calculate comprehensive descriptive statistics"""
     stats_dict = {} # Renamed to stats_dict to be explicit
     
-    # Central tendency
+    # Central tendency and dispersion for all numeric columns
     for col in df.columns:
-        stats_dict[f'avg_{col}'] = df[col].mean()
-        stats_dict[f'median_{col}'] = df[col].median()
-        stats_dict[f'min_{col}'] = df[col].min()
-        stats_dict[f'max_{col}'] = df[col].max()
+        if pd.api.types.is_numeric_dtype(df[col]):
+            stats_dict[f'avg_{col}'] = df[col].mean()
+            stats_dict[f'median_{col}'] = df[col].median()
+            stats_dict[f'min_{col}'] = df[col].min()
+            stats_dict[f'max_{col}'] = df[col].max()
+            stats_dict[f'std_{col}'] = df[col].std() # Add std for all numeric columns
     
-    # Dispersion
-    stats_dict['std_home_value'] = df['House Value ($)'].std()
-    stats_dict['std_payment'] = df['Monthly Payment ($)'].std()
     stats_dict['payment_range'] = stats_dict['max_Monthly Payment ($)'] - stats_dict['min_Monthly Payment ($)']
     
     # Shape
@@ -75,20 +74,9 @@ def calculate_correlations(descriptive_stats_dict): # Now accepts the stats dict
         # Handle features where std_ might not be directly calculated or meaningful (e.g., percentages, ratios)
         # You might need to add more specific std_ calculations in calculate_descriptive_stats
         # or handle these cases differently if they don't have a direct 'std_' equivalent
-        if std_feature_key not in descriptive_stats_dict:
-            # Fallback or skip if std_ for that feature is not available
-            # For simplicity, let's assume all relevant 'std_' keys are in descriptive_stats_dict
-            # If not, this needs more robust error handling or a default value.
-            # For example, if 'Down Payment (%)' doesn't have 'std_Down Payment (%)'
-            # but rather 'std_down_payment_pct', you need to map it.
-            # For now, I'll add a specific std for 'Down Payment (%)' in descriptive stats.
-            
-            # Let's add std for all numeric columns in calculate_descriptive_stats
-            # to ensure these keys exist.
-            pass # The descriptive_stats_dict will be updated to include all stds
         
-        # Access the passed dictionary
         impact_value = 0.0 # Default in case of division by zero or missing key
+        # Check if the std_feature_key exists and its value is not zero to prevent division by zero
         if descriptive_stats_dict.get(std_feature_key) and descriptive_stats_dict[std_feature_key] != 0:
             impact_value = corr * descriptive_stats_dict['std_payment'] / descriptive_stats_dict[std_feature_key]
         
@@ -113,31 +101,6 @@ def calculate_correlations(descriptive_stats_dict): # Now accepts the stats dict
         }
     }
 
-# Update calculate_descriptive_stats to include std for all numeric columns for calculate_correlations
-def calculate_descriptive_stats():
-    """Calculate comprehensive descriptive statistics"""
-    stats_dict = {}
-    
-    # Central tendency and dispersion for all numeric columns
-    for col in df.columns:
-        if pd.api.types.is_numeric_dtype(df[col]):
-            stats_dict[f'avg_{col}'] = df[col].mean()
-            stats_dict[f'median_{col}'] = df[col].median()
-            stats_dict[f'min_{col}'] = df[col].min()
-            stats_dict[f'max_{col}'] = df[col].max()
-            stats_dict[f'std_{col}'] = df[col].std() # Add std for all numeric columns
-    
-    stats_dict['payment_range'] = stats_dict['max_Monthly Payment ($)'] - stats_dict['min_Monthly Payment ($)']
-    
-    # Shape
-    stats_dict['payment_skewness'] = df['Monthly Payment ($)'].skew()
-    stats_dict['payment_kurtosis'] = df['Monthly Payment ($)'].kurtosis()
-    
-    # Percentiles
-    for p in [25, 50, 75, 90]:
-        stats_dict[f'p{p}_payment'] = df['Monthly Payment ($)'].quantile(p/100)
-    
-    return stats_dict
 
 # =====================
 # PREDICTIVE MODELING  
