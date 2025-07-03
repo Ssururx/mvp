@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score, mean_squared_error
-from scipy import stats
+from scipy import stats as scipy_stats # Renamed scipy.stats to avoid conflict
 import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
@@ -18,7 +18,7 @@ app = Flask(__name__)
 
 raw_data = {
     "House Value ($)": [350000, 400000, 450000, 500000, 550000],
-    "Down Payment ($)": [70000, 80000, 90000, 100000, 110000], 
+    "Down Payment ($)": [70000, 80000, 90000, 100000, 110000],
     "Loan Amount ($)": [280000, 320000, 360000, 400000, 440000],
     "Interest Rate (%)": [3.5, 3.8, 4.0, 4.2, 4.5],
     "Monthly Payment ($)": [1260, 1370, 1500, 1590, 1690]
@@ -34,31 +34,31 @@ df['Loan-to-Value Ratio'] = df['Loan Amount ($)'] / df['House Value ($)']
 
 def calculate_descriptive_stats():
     """Calculate comprehensive descriptive statistics"""
-    stats = {}
+    stats_dict = {} # Renamed to stats_dict to be explicit
     
     # Central tendency
     for col in df.columns:
-        stats[f'avg_{col}'] = df[col].mean()
-        stats[f'median_{col}'] = df[col].median()
-        stats[f'min_{col}'] = df[col].min()
-        stats[f'max_{col}'] = df[col].max()
+        stats_dict[f'avg_{col}'] = df[col].mean()
+        stats_dict[f'median_{col}'] = df[col].median()
+        stats_dict[f'min_{col}'] = df[col].min()
+        stats_dict[f'max_{col}'] = df[col].max()
     
     # Dispersion
-    stats['std_home_value'] = df['House Value ($)'].std()
-    stats['std_payment'] = df['Monthly Payment ($)'].std()
-    stats['payment_range'] = stats['max_Monthly Payment ($)'] - stats['min_Monthly Payment ($)']
+    stats_dict['std_home_value'] = df['House Value ($)'].std()
+    stats_dict['std_payment'] = df['Monthly Payment ($)'].std()
+    stats_dict['payment_range'] = stats_dict['max_Monthly Payment ($)'] - stats_dict['min_Monthly Payment ($)']
     
     # Shape
-    stats['payment_skewness'] = df['Monthly Payment ($)'].skew()
-    stats['payment_kurtosis'] = df['Monthly Payment ($)'].kurtosis()
+    stats_dict['payment_skewness'] = df['Monthly Payment ($)'].skew()
+    stats_dict['payment_kurtosis'] = df['Monthly Payment ($)'].kurtosis()
     
     # Percentiles
     for p in [25, 50, 75, 90]:
-        stats[f'p{p}_payment'] = df['Monthly Payment ($)'].quantile(p/100)
+        stats_dict[f'p{p}_payment'] = df['Monthly Payment ($)'].quantile(p/100)
     
-    return stats
+    return stats_dict # Return the dictionary
 
-def calculate_correlations():
+def calculate_correlations(descriptive_stats_dict): # Now accepts the stats dictionary
     """Calculate complete correlation matrix and key relationships"""
     corr_matrix = df.corr().round(3)
     
@@ -68,15 +68,39 @@ def calculate_correlations():
     
     key_relationships = []
     for feature, corr in payment_corrs.items():
+        # Ensure the feature exists in the descriptive_stats_dict before accessing
+        # This handles cases where std_feature might not be directly available for all features
+        std_feature_key = f'std_{feature}'
+        
+        # Handle features where std_ might not be directly calculated or meaningful (e.g., percentages, ratios)
+        # You might need to add more specific std_ calculations in calculate_descriptive_stats
+        # or handle these cases differently if they don't have a direct 'std_' equivalent
+        if std_feature_key not in descriptive_stats_dict:
+            # Fallback or skip if std_ for that feature is not available
+            # For simplicity, let's assume all relevant 'std_' keys are in descriptive_stats_dict
+            # If not, this needs more robust error handling or a default value.
+            # For example, if 'Down Payment (%)' doesn't have 'std_Down Payment (%)'
+            # but rather 'std_down_payment_pct', you need to map it.
+            # For now, I'll add a specific std for 'Down Payment (%)' in descriptive stats.
+            
+            # Let's add std for all numeric columns in calculate_descriptive_stats
+            # to ensure these keys exist.
+            pass # The descriptive_stats_dict will be updated to include all stds
+        
+        # Access the passed dictionary
+        impact_value = 0.0 # Default in case of division by zero or missing key
+        if descriptive_stats_dict.get(std_feature_key) and descriptive_stats_dict[std_feature_key] != 0:
+            impact_value = corr * descriptive_stats_dict['std_payment'] / descriptive_stats_dict[std_feature_key]
+        
         relationship = {
             'feature': feature,
             'correlation': corr,
             'strength': 'very strong' if abs(corr) > 0.8 else 
-                       'strong' if abs(corr) > 0.6 else
-                       'moderate' if abs(corr) > 0.4 else
-                       'weak',
+                               'strong' if abs(corr) > 0.6 else
+                               'moderate' if abs(corr) > 0.4 else
+                               'weak',
             'direction': 'positive' if corr > 0 else 'negative',
-            'impact': f"${corr * stats['std_payment'] / stats[f'std_{feature}']:,.2f} per unit change"
+            'impact': f"${impact_value:,.2f} per unit change" # Use impact_value
         }
         key_relationships.append(relationship)
     
@@ -89,8 +113,34 @@ def calculate_correlations():
         }
     }
 
+# Update calculate_descriptive_stats to include std for all numeric columns for calculate_correlations
+def calculate_descriptive_stats():
+    """Calculate comprehensive descriptive statistics"""
+    stats_dict = {}
+    
+    # Central tendency and dispersion for all numeric columns
+    for col in df.columns:
+        if pd.api.types.is_numeric_dtype(df[col]):
+            stats_dict[f'avg_{col}'] = df[col].mean()
+            stats_dict[f'median_{col}'] = df[col].median()
+            stats_dict[f'min_{col}'] = df[col].min()
+            stats_dict[f'max_{col}'] = df[col].max()
+            stats_dict[f'std_{col}'] = df[col].std() # Add std for all numeric columns
+    
+    stats_dict['payment_range'] = stats_dict['max_Monthly Payment ($)'] - stats_dict['min_Monthly Payment ($)']
+    
+    # Shape
+    stats_dict['payment_skewness'] = df['Monthly Payment ($)'].skew()
+    stats_dict['payment_kurtosis'] = df['Monthly Payment ($)'].kurtosis()
+    
+    # Percentiles
+    for p in [25, 50, 75, 90]:
+        stats_dict[f'p{p}_payment'] = df['Monthly Payment ($)'].quantile(p/100)
+    
+    return stats_dict
+
 # =====================
-# PREDICTIVE MODELING  
+# PREDICTIVE MODELING  
 # =====================
 
 def build_regression_models():
@@ -136,7 +186,7 @@ def build_regression_models():
             'loan_amount': df['Loan Amount ($)'].median(),
             'interest_rate': df['Interest Rate (%)'].median(),
             'payment': df.loc[df['House Value ($)'] == df['House Value ($)'].median(), 
-                             'Monthly Payment ($)'].values[0]
+                               'Monthly Payment ($)'].values[0]
         }
     }
 
@@ -167,13 +217,10 @@ def generate_visualization_data():
         'q1': df['Monthly Payment ($)'].quantile(0.25),
         'median': df['Monthly Payment ($)'].median(),
         'q3': df['Monthly Payment ($)'].quantile(0.75),
-        'whisker_low': df['Monthly Payment ($)'].quantile(0.25) - 
-                      1.5*(df['Monthly Payment ($)'].quantile(0.75) - 
-                      df['Monthly Payment ($)'].quantile(0.25)),
-        'whisker_high': df['Monthly Payment ($)'].quantile(0.75) + 
-                       1.5*(df['Monthly Payment ($)'].quantile(0.75) - 
-                       df['Monthly Payment ($)'].quantile(0.25))
+        'iqr': df['Monthly Payment ($)'].quantile(0.75) - df['Monthly Payment ($)'].quantile(0.25)
     }
+    boxplot_stats['whisker_low'] = boxplot_stats['q1'] - 1.5 * boxplot_stats['iqr']
+    boxplot_stats['whisker_high'] = boxplot_stats['q3'] + 1.5 * boxplot_stats['iqr']
     
     return {
         'scatter_plot': scatter_url,
@@ -196,6 +243,12 @@ def calculate_mortgage_payment(principal, annual_rate, years=30):
     """Calculate monthly mortgage payment using standard formula"""
     monthly_rate = annual_rate / 100 / 12
     n_payments = years * 12
+    # Handle monthly_rate being zero for 0% interest
+    if monthly_rate == 0:
+        if n_payments == 0: # Avoid division by zero if years is also 0
+            return principal
+        return principal / n_payments
+    
     payment = principal * (monthly_rate * (1 + monthly_rate)**n_payments) / ((1 + monthly_rate)**n_payments - 1)
     return payment
 
@@ -207,8 +260,8 @@ def calculate_mortgage_payment(principal, annual_rate, years=30):
 def dashboard():
     """Main dashboard route serving all calculated data"""
     # Calculate all metrics
-    stats = calculate_descriptive_stats()
-    corr = calculate_correlations()
+    stats_dict = calculate_descriptive_stats() # Get the stats dictionary
+    corr = calculate_correlations(stats_dict) # Pass the stats dictionary to correlations
     models = build_regression_models()
     viz = generate_visualization_data()
     
@@ -259,24 +312,24 @@ def dashboard():
         # Key statistics cards
         "stats": [
             {
-                "value": f"${stats['avg_House Value ($)']/1000:,.1f}K",
+                "value": f"${stats_dict['avg_House Value ($)']/1000:,.1f}K",
                 "label": "Average Home Value",
-                "change": f"{((stats['max_House Value ($)'] - stats['min_House Value ($)'])/stats['avg_House Value ($)'])*100:.1f}% range"
+                "change": f"{((stats_dict['max_House Value ($)'] - stats_dict['min_House Value ($)'])/stats_dict['avg_House Value ($)'])*100:.1f}% range"
             },
             {
-                "value": f"{stats['avg_Interest Rate (%)']:.2f}%",
+                "value": f"{stats_dict['avg_Interest Rate (%)']:.2f}%",
                 "label": "Avg Interest Rate",
-                "change": f"{(stats['max_Interest Rate (%)'] - stats['min_Interest Rate (%)']):.1f}% spread"
+                "change": f"{(stats_dict['max_Interest Rate (%)'] - stats_dict['min_Interest Rate (%)']):.1f}% spread"
             },
             {
-                "value": f"${stats['avg_Monthly Payment ($)']:,.0f}",
+                "value": f"${stats_dict['avg_Monthly Payment ($)']:.0f}",
                 "label": "Avg Monthly Payment",
-                "change": f"${stats['payment_range']:,.0f} range"
+                "change": f"${stats_dict['payment_range']:,.0f} range"
             },
             {
-                "value": f"{stats['avg_Down Payment (%)']:.1f}%",
+                "value": f"{stats_dict['avg_Down Payment (%)']:.1f}%",
                 "label": "Avg Down Payment",
-                "change": f"{(stats['max_Down Payment (%)'] - stats['min_Down Payment (%)']):.1f}% spread"
+                "change": f"{(stats_dict['max_Down Payment (%)'] - stats_dict['min_Down Payment (%)']):.1f}% spread"
             }
         ],
         
@@ -307,7 +360,7 @@ def dashboard():
                         {
                             "value": f"{corr['matrix'].loc[col, other_col]:.2f}",
                             "class": "positive" if corr['matrix'].loc[col, other_col] > 0.5 else 
-                                    "negative" if corr['matrix'].loc[col, other_col] < -0.5 else "neutral"
+                                     "negative" if corr['matrix'].loc[col, other_col] < -0.5 else "neutral"
                         }
                         for other_col in df.columns
                     ]
@@ -365,7 +418,7 @@ def dashboard():
         "calculator_defaults": {
             "home_value": models['median_example']['home_value'],
             "down_payment_pct": (models['median_example']['down_payment'] / 
-                                models['median_example']['home_value']) * 100,
+                                 models['median_example']['home_value']) * 100,
             "interest_rate": models['median_example']['interest_rate'],
             "loan_term": 30,
             "example_payment": models['median_example']['payment']
@@ -376,26 +429,26 @@ def dashboard():
             "completeness": "100%",
             "duplicates": 0,
             "outliers": {
-                "count": 0,
+                "count": 0, # Placeholder, actual outlier detection not implemented
                 "method": "IQR (1.5x)"
             },
-            "skewness": f"{stats['payment_skewness']:.2f}",
-            "kurtosis": f"{stats['payment_kurtosis']:.2f}"
+            "skewness": f"{stats_dict['payment_skewness']:.2f}",
+            "kurtosis": f"{stats_dict['payment_kurtosis']:.2f}"
         },
         
         # Statistical tests
         "statistical_tests": [
             {
                 "name": "Normality (Shapiro-Wilk)",
-                "result": "Normal" if abs(stats['payment_skewness']) < 0.5 and 
-                              abs(stats['payment_kurtosis']) < 1 else "Non-normal",
-                "details": f"Skewness: {stats['payment_skewness']:.2f}, Kurtosis: {stats['payment_kurtosis']:.2f}"
+                "result": "Normal" if abs(stats_dict['payment_skewness']) < 0.5 and 
+                                     abs(stats_dict['payment_kurtosis']) < 1 else "Non-normal",
+                "details": f"Skewness: {stats_dict['payment_skewness']:.2f}, Kurtosis: {stats_dict['payment_kurtosis']:.2f}"
             },
             {
                 "name": "Homoscedasticity",
-                "result": "Equal variance" if stats['std_payment']/stats['avg_Monthly Payment ($)'] < 0.2 
-                          else "Unequal variance",
-                "details": f"CV: {(stats['std_payment']/stats['avg_Monthly Payment ($)'])*100:.1f}%"
+                "result": "Equal variance" if stats_dict['std_payment']/stats_dict['avg_Monthly Payment ($)'] < 0.2 
+                                     else "Unequal variance",
+                "details": f"CV: {(stats_dict['std_payment']/stats_dict['avg_Monthly Payment ($)'])*100:.1f}%"
             }
         ],
         
@@ -404,7 +457,7 @@ def dashboard():
             {
                 "title": "Down Payment Optimization",
                 "content": (
-                    f"The optimal down payment percentage appears to be around {stats['median_Down Payment (%)']:.1f}%. "
+                    f"The optimal down payment percentage appears to be around {stats_dict['median_Down Payment (%)']:.1f}%. "
                     "Higher down payments reduce loan amounts but have diminishing returns on payment reduction."
                 ),
                 "tags": ["optimization", "down-payment"]
@@ -458,9 +511,9 @@ def calculate():
             "amortization_schedule": [
                 {
                     "year": year,
-                    "principal_paid": round(loan_amount * (year/loan_term) * 0.8, 2),
-                    "interest_paid": round(loan_amount * (year/loan_term) * 0.2, 2),
-                    "remaining_balance": round(loan_amount * (1 - year/loan_term), 2)
+                    "principal_paid": round(loan_amount * (year/loan_term) * 0.8, 2), # Simplified for demo
+                    "interest_paid": round(loan_amount * (year/loan_term) * 0.2, 2), # Simplified for demo
+                    "remaining_balance": round(loan_amount * (1 - year/loan_term), 2) # Simplified for demo
                 }
                 for year in range(1, loan_term + 1)
             ]
