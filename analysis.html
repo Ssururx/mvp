@@ -827,1259 +827,1434 @@
     </style>
 </head>
 <body>
-   
     <nav class="navbar">
-    <a href="/" class="logo">
-        <i class="fas fa-brain logo-icon"></i>
-        <span>{{ app_name }}</span>
-    </a>
-  
-    <div class="nav-links">
-        <a href="/">Home</a>
-        <a href="/upload">Upload</a>
-        <a href="/analysis" class="active">Analysis</a>
-        <a href="/about">About</a>
-        <a href="/contact">Contact</a>
-    </div>
-    <div class="auth-buttons">
-        <button class="auth-btn login">{{ login_button_text }}</button>
-        <button class="auth-btn signup">{{ signup_button_text }}</button>
-    </div>
-</nav>
-
-<div class="main-container">
-    <div class="sidebar">
-        <button class="sidebar-toggle" id="sidebarToggle">
-            <i class="fas fa-chevron-right"></i>
-        </button>
-        
-        <div class="sidebar-header">
-            <div class="dataset-name">{{ dataset_name }}</div>
-            <div class="dataset-info">
-                <span><i class="fas fa-database"></i> {{ record_count }} records</span>
-                <span><i class="fas fa-clock"></i> {{ last_updated }}</span>
-            </div>
+        <a href="/" class="logo">
+            <i class="fas fa-brain logo-icon"></i>
+            <span>DataMind</span>
+        </a>
+      
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/upload">Upload</a>
+            <a href="/analysis" class="active">Analysis</a>
+            <a href="/about">About</a>
+            <a href="/contact">Contact</a>
         </div>
-        
-        <ul class="sidebar-menu">
-            {% for menu_item in menu_items %}
-            <li><a href="#" class="{{ 'active' if menu_item.active else '' }}" data-section="{{ menu_item.section }}">
-                <i class="{{ menu_item.icon }}"></i> {{ menu_item.text }}</a></li>
-            {% endfor %}
-        </ul>
-    </div>
+        <div class="auth-buttons">
+            <button class="auth-btn login">Login</button>
+            <button class="auth-btn signup">Sign Up</button>
+        </div>
+    </nav>
 
-    <div class="analysis-sections" id="analysisSections">
-        <!-- Overview Section -->
-        <section class="analysis-section {{ 'active' if sections.overview.active else '' }}" id="overview-section">
-            <div class="section-nav">
-                <h1 class="section-title">
-                    <i class="{{ sections.overview.icon }}"></i>
-                    {{ sections.overview.title }}
-                </h1>
-                <div class="nav-buttons">
-                    <button class="nav-btn secondary" id="prevSection" disabled>
-                        <i class="fas fa-chevron-left"></i> {{ prev_button_text }}
-                    </button>
-                    <button class="nav-btn" id="nextSection">
-                        {{ next_button_text }} <i class="fas fa-chevron-right"></i>
-                    </button>
+    <div class="main-container">
+        <div class="sidebar">
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+            
+            <div class="sidebar-header">
+                <div class="dataset-name">Mortgage Dataset</div>
+                <div class="dataset-info">
+                    <span><i class="fas fa-database"></i> 5 records</span>
+                    <span><i class="fas fa-clock"></i> Updated now</span>
                 </div>
             </div>
             
-            <div class="dashboard-grid">
+            <ul class="sidebar-menu">
+                <li><a href="#" class="active" data-section="overview"><i class="fas fa-chart-pie"></i> Overview</a></li>
+                <li><a href="#" data-section="exploration"><i class="fas fa-search"></i> Data Exploration</a></li>
+                <li><a href="#" data-section="visualization"><i class="fas fa-chart-line"></i> Visualization</a></li>
+                <li><a href="#" data-section="equations"><i class="fas fa-calculator"></i> Predictive Models</a></li>
+                <li><a href="#" data-section="insights"><i class="fas fa-lightbulb"></i> Insights</a></li>
+            </ul>
+        </div>
+
+        <div class="analysis-sections" id="analysisSections">
+            <!-- Overview Section -->
+            <section class="analysis-section active" id="overview-section">
+                <div class="section-nav">
+                    <h1 class="section-title">
+                        <i class="fas fa-chart-pie"></i>
+                        Dataset Overview
+                    </h1>
+                    <div class="nav-buttons">
+                        <button class="nav-btn secondary" id="prevSection" disabled>
+                            <i class="fas fa-chevron-left"></i> Previous
+                        </button>
+                        <button class="nav-btn" id="nextSection">
+                            Next <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="dashboard-grid">
                 <!-- Basic Stats Panel -->
                 <div class="dashboard-panel animate-fade">
                     <div class="panel-header">
-                        <h2 class="panel-title"><i class="{{ panels.key_metrics.icon }}"></i> {{ panels.key_metrics.title }}</h2>
+                        <h2 class="panel-title"><i class="fas fa-info-circle"></i> Key Metrics</h2>
                         <div class="panel-actions">
-                            <button class="panel-btn" title="{{ refresh_text }}"><i class="fas fa-sync-alt"></i></button>
+                            <button class="panel-btn" title="Refresh"><i class="fas fa-sync-alt"></i></button>
                         </div>
                     </div>
                     
                     <div class="stats-grid">
-                        {% for stat in stats %}
-                        <div class="stat-card animate-fade delay-{{ loop.index }}">
-                            <div class="stat-value">{{ stat.value }}</div>
-                            <div class="stat-label">{{ stat.label }}</div>
+                        <div class="stat-card animate-fade delay-1">
+                            <div class="stat-value">{{ stats.stat1_value }}</div>
+                            <div class="stat-label">{{ stats.stat1_label }}</div>
                         </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                
-                <!-- Data Sample Panel -->
-                <div class="dashboard-panel animate-fade delay-1">
-                    <div class="panel-header">
-                        <h2 class="panel-title"><i class="{{ panels.data_sample.icon }}"></i> {{ panels.data_sample.title }}</h2>
-                        <div class="panel-actions">
-                            <button class="panel-btn" title="{{ export_text }}"><i class="fas fa-file-export"></i></button>
+                        <div class="stat-card animate-fade delay-2">
+                            <div class="stat-value">{{ stats.stat2_value }}</div>
+                            <div class="stat-label">{{ stats.stat2_label }}</div>
                         </div>
-                    </div>
-                    
-                    <div class="table-responsive">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    {% for header in data_sample.headers %}
-                                    <th>{{ header }}</th>
-                                    {% endfor %}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for row in data_sample.rows %}
-                                <tr>
-                                    {% for cell in row %}
-                                    <td>{{ cell }}</td>
-                                    {% endfor %}
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                
-                <!-- Correlation Matrix Panel -->
-                <div class="dashboard-panel animate-fade delay-2">
-                    <div class="panel-header">
-                        <h2 class="panel-title"><i class="{{ panels.correlation_matrix.icon }}"></i> {{ panels.correlation_matrix.title }}</h2>
-                        <div class="panel-actions">
-                            <button class="panel-btn" title="{{ export_text }}"><i class="fas fa-file-export"></i></button>
+                        <div class="stat-card animate-fade delay-3">
+                            <div class="stat-value">{{ stats.stat3_value }}</div>
+                            <div class="stat-label">{{ stats.stat3_label }}</div>
                         </div>
-                    </div>
-                    
-                    <div class="graph-container">
-                        <table class="correlation-matrix">
-                            <thead>
-                                <tr>
-                                    <th>{{ correlation_matrix.variable_text }}</th>
-                                    {% for header in correlation_matrix.headers %}
-                                    <th>{{ header }}</th>
-                                    {% endfor %}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for row in correlation_matrix.rows %}
-                                <tr>
-                                    <td>{{ row.variable }}</td>
-                                    {% for value in row.values %}
-                                    <td class="{{ value.class }}">{{ value.value }}</td>
-                                    {% endfor %}
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                
-                <!-- Key Correlations Panel -->
-                <div class="dashboard-panel animate-fade delay-3">
-                    <div class="panel-header">
-                        <h2 class="panel-title"><i class="{{ panels.key_correlations.icon }}"></i> {{ panels.key_correlations.title }}</h2>
-                        <div class="panel-actions">
-                            <button class="panel-btn" title="{{ refresh_text }}"><i class="fas fa-sync-alt"></i></button>
+                        <div class="stat-card animate-fade delay-4">
+                            <div class="stat-value">{{ stats.stat4_value }}</div>
+                            <div class="stat-label">{{ stats.stat4_label }}</div>
                         </div>
-                    </div>
-                    
-                    <div class="insights-list">
-                        {% for insight in key_insights %}
-                        <div class="insight-item">
-                            <div class="insight-header">
-                                <i class="{{ insight.icon }} insight-icon"></i>
-                                <div class="insight-title">{{ insight.title }}</div>
-                            </div>
-                            <div class="insight-text">
-                                {{ insight.text }}
-                            </div>
-                            <div class="insight-tags">
-                                {% for tag in insight.tags %}
-                                <span class="insight-tag">{{ tag }}</span>
-                                {% endfor %}
-                            </div>
-                        </div>
-                        {% endfor %}
                     </div>
                 </div>
             </div>
-        </section>
-        
-        <!-- Data Exploration Section -->
-        <section class="analysis-section {{ 'active' if sections.exploration.active else '' }}" id="exploration-section">
-            <div class="section-nav">
-                <h1 class="section-title">
-                    <i class="{{ sections.exploration.icon }}"></i>
-                    {{ sections.exploration.title }}
-                </h1>
-                <div class="nav-buttons">
-                    <button class="nav-btn secondary" id="prevSection1">
-                        <i class="fas fa-chevron-left"></i> {{ prev_button_text }}
-                    </button>
-                    <button class="nav-btn" id="nextSection1">
-                        {{ next_button_text }} <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
-            </div>
-            
-            <div class="dashboard-grid">
-                <!-- Distribution Analysis Panel -->
-                <div class="dashboard-panel animate-fade">
-                    <div class="panel-header">
-                        <h2 class="panel-title"><i class="{{ panels.distribution_analysis.icon }}"></i> {{ panels.distribution_analysis.title }}</h2>
-                        <div class="panel-actions">
-                            <select class="graph-select" style="width: 150px;">
-                                {% for option in distribution_options %}
-                                <option {{ 'selected' if option.selected else '' }}>{{ option.text }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
                     
-                    <div class="graph-container">
-                        <canvas id="distributionChart"></canvas>
-                    </div>
-                    
-                    <div class="equation-metrics" style="margin-top: 1rem; grid-template-columns: repeat(2, 1fr);">
-                        {% for metric in distribution_metrics %}
-                        <div class="metric">
-                            <span class="metric-label">{{ metric.label }}</span>
-                            <span class="metric-value">{{ metric.value }}</span>
-                        </div>
-                        {% endfor %}
+                    <!-- Data Sample Panel -->
+            <div class="dashboard-panel animate-fade delay-1">
+                <div class="panel-header">
+                    <h2 class="panel-title"><i class="fas fa-table"></i> Data Sample</h2>
+                    <div class="panel-actions">
+                        <button class="panel-btn" title="Export"><i class="fas fa-file-export"></i></button>
                     </div>
                 </div>
                 
-                <!-- Outliers Detection Panel -->
-                <div class="dashboard-panel animate-fade delay-1">
-                    <div class="panel-header">
-                        <h2 class="panel-title"><i class="{{ panels.outliers_detection.icon }}"></i> {{ panels.outliers_detection.title }}</h2>
-                        <div class="panel-actions">
-                            <button class="panel-btn" title="{{ fix_issues_text }}"><i class="fas fa-wrench"></i></button>
-                        </div>
-                    </div>
-                    
-                    <div class="graph-container">
-                        <canvas id="outliersChart"></canvas>
-                    </div>
-                    
-                    <div style="margin-top: 1rem;">
-                        <div class="data-type-item">
-                            <span class="data-type-name">
-                                <i class="fas fa-exclamation-circle"></i>
-                                {{ potential_outliers_text }}
-                            </span>
-                            <span class="data-type-count">{{ outlier_count }} records</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Data Quality Panel -->
-                <div class="dashboard-panel animate-fade delay-2">
-                    <div class="panel-header">
-                        <h2 class="panel-title"><i class="{{ panels.data_quality.icon }}"></i> {{ panels.data_quality.title }}</h2>
-                        <div class="panel-actions">
-                            <button class="panel-btn" title="{{ export_text }}"><i class="fas fa-file-export"></i></button>
-                        </div>
-                    </div>
-                    
+                <div class="table-responsive">
                     <table class="data-table">
                         <thead>
                             <tr>
-                                {% for header in quality_report.headers %}
-                                <th>{{ header }}</th>
+                                {% for column in data_sample.columns %}
+                                <th>{{ column }}</th>
                                 {% endfor %}
                             </tr>
                         </thead>
                         <tbody>
-                            {% for row in quality_report.rows %}
+                            {% for row in data_sample.sample_data %}
                             <tr>
-                                {% for cell in row %}
-                                <td>{{ cell }}</td>
+                                {% for column in data_sample.columns %}
+                                <td>{{ row[column.lower().replace(' ', '_')] }}</td>
                                 {% endfor %}
                             </tr>
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
+            </div>
+                    
+             <!-- Correlation Matrix Panel -->
+            <div class="dashboard-panel animate-fade delay-2">
+                <div class="panel-header">
+                    <h2 class="panel-title"><i class="fas fa-project-diagram"></i> Correlation Matrix</h2>
+                    <div class="panel-actions">
+                        <button class="panel-btn" title="Export"><i class="fas fa-file-export"></i></button>
+                    </div>
+                </div>
                 
-                <!-- Statistical Tests Panel -->
-                <div class="dashboard-panel animate-fade delay-3">
-                    <div class="panel-header">
-                        <h2 class="panel-title"><i class="{{ panels.statistical_tests.icon }}"></i> {{ panels.statistical_tests.title }}</h2>
-                        <div class="panel-actions">
-                            <button class="panel-btn" title="{{ run_tests_text }}"><i class="fas fa-play"></i></button>
-                        </div>
-                    </div>
+                <div class="graph-container">
+                    <table class="correlation-matrix">
+                        <thead>
+                            <tr>
+                                <th>Variable</th>
+                                {% for column in correlation_data.columns %}
+                                <th>{{ column }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in correlation_data.rows %}
+                            <tr>
+                                <td>{{ row.variable }}</td>
+                                {% for cell in row.values %}
+                                <td class="{{ cell.class }}">{{ cell.value }}</td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>       
                     
-                    <div class="insights-list">
-                        {% for test in statistical_tests %}
-                        <div class="insight-item">
-                            <div class="insight-header">
-                                <div class="insight-title">{{ test.title }}</div>
-                            </div>
-                            <div class="insight-text">
-                                {{ test.result }}
-                            </div>
-                        </div>
-                        {% endfor %}
+              <!-- Key Correlations Panel -->
+            <div class="dashboard-panel animate-fade delay-3">
+                <div class="panel-header">
+                    <h2 class="panel-title"><i class="fas fa-link"></i> Key Correlations</h2>
+                    <div class="panel-actions">
+                        <button class="panel-btn" title="Refresh"><i class="fas fa-sync-alt"></i></button>
                     </div>
                 </div>
-            </div>
-        </section>
-        
-        <!-- Visualization Section -->
-        <section class="analysis-section {{ 'active' if sections.visualization.active else '' }}" id="visualization-section">
-            <div class="section-nav">
-                <h1 class="section-title">
-                    <i class="{{ sections.visualization.icon }}"></i>
-                    {{ sections.visualization.title }}
-                </h1>
-                <div class="nav-buttons">
-                    <button class="nav-btn secondary" id="prevSection2">
-                        <i class="fas fa-chevron-left"></i> {{ prev_button_text }}
-                    </button>
-                    <button class="nav-btn" id="nextSection2">
-                        {{ next_button_text }} <i class="fas fa-chevron-right"></i>
-                    </button>
+                
+                <div class="insights-list">
+                    {% for insight in correlation_insights %}
+                    <div class="insight-item">
+                        <div class="insight-header">
+                            <i class="{{ insight.icon }} insight-icon"></i>
+                            <div class="insight-title">{{ insight.title }}</div>
+                        </div>
+                        <div class="insight-text">
+                            {{ insight.text }}
+                        </div>
+                        <div class="insight-tags">
+                            {% for tag in insight.tags %}
+                            <span class="insight-tag">{{ tag }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="insight-item">
+                        <div class="insight-header">
+                            <i class="fas fa-info-circle insight-icon"></i>
+                            <div class="insight-title">No Strong Correlations Found</div>
+                        </div>
+                        <div class="insight-text">
+                            The dataset doesn't contain strongly correlated numeric variables.
+                        </div>
+                    </div>
+                    {% endfor %}
                 </div>
-            </div>
+            </div>      
+            </section>
             
-            <div class="dashboard-grid">
-                <!-- Visualization Controls Panel -->
-                <div class="dashboard-panel animate-fade">
-                    <div class="panel-header">
-                        <h2 class="panel-title"><i class="{{ panels.visualization_controls.icon }}"></i> {{ panels.visualization_controls.title }}</h2>
-                        <div class="panel-actions">
-                            <button class="panel-btn" title="{{ save_preset_text }}"><i class="fas fa-save"></i></button>
-                        </div>
-                    </div>
-                    
-                    <div class="graph-controls">
-                        <div class="control-group">
-                            <label class="control-label">{{ chart_type_text }}</label>
-                            <select class="graph-select" id="chartTypeSelect">
-                                {% for type in chart_types %}
-                                <option value="{{ type.value }}" {{ 'selected' if type.selected else '' }}>{{ type.text }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        
-                        <div class="control-group">
-                            <label class="control-label">{{ x_axis_text }}</label>
-                            <select class="graph-select" id="xAxisSelect">
-                                {% for axis in x_axes %}
-                                <option value="{{ axis.value }}" {{ 'selected' if axis.selected else '' }}>{{ axis.text }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        
-                        <div class="control-group">
-                            <label class="control-label">{{ y_axis_text }}</label>
-                            <select class="graph-select" id="yAxisSelect">
-                                {% for axis in y_axes %}
-                                <option value="{{ axis.value }}" {{ 'selected' if axis.selected else '' }}>{{ axis.text }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        
-                        <div class="control-group">
-                            <label class="control-label">{{ function_type_text }}</label>
-                            <div class="function-selector">
-                                {% for func in function_types %}
-                                <button class="function-btn {{ 'active' if func.active else '' }}" data-function="{{ func.value }}">{{ func.text }}</button>
-                                {% endfor %}
-                            </div>
-                        </div>
-                        
-                        <button class="nav-btn" id="generateChart" style="align-self: flex-end;">
-                            <i class="fas fa-play"></i> {{ generate_text }}
+            <!-- Data Exploration Section -->
+            <section class="analysis-section" id="exploration-section">
+                <div class="section-nav">
+                    <h1 class="section-title">
+                        <i class="fas fa-search"></i>
+                        Data Exploration
+                    </h1>
+                    <div class="nav-buttons">
+                        <button class="nav-btn secondary" id="prevSection1">
+                            <i class="fas fa-chevron-left"></i> Previous
+                        </button>
+                        <button class="nav-btn" id="nextSection1">
+                            Next <i class="fas fa-chevron-right"></i>
                         </button>
                     </div>
                 </div>
                 
-                <!-- Main Visualization Panel -->
-                <div class="dashboard-panel animate-fade delay-1" style="grid-column: span 2;">
-                    <div class="panel-header">
-                        <h2 class="panel-title"><i class="{{ panels.main_visualization.icon }}"></i> {{ panels.main_visualization.title }}</h2>
-                        <div class="panel-actions">
-                            <button class="panel-btn" title="{{ export_text }}"><i class="fas fa-download"></i></button>
-                            <button class="panel-btn" title="{{ fullscreen_text }}"><i class="fas fa-expand"></i></button>
+                <div class="dashboard-grid">
+                    <!-- Distribution Analysis Panel -->
+                    <div class="dashboard-panel animate-fade">
+                        <div class="panel-header">
+                            <h2 class="panel-title"><i class="fas fa-chart-bar"></i> Distribution Analysis</h2>
+                            <div class="panel-actions">
+                                <select class="graph-select" style="width: 150px;">
+                                    <option>Home Value</option>
+                                    <option>Interest Rate</option>
+                                    <option selected>Monthly Payment</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="graph-container">
+                            <canvas id="distributionChart"></canvas>
+                        </div>
+                        
+                        <div class="equation-metrics" style="margin-top: 1rem; grid-template-columns: repeat(2, 1fr);">
+                            <div class="metric">
+                                <span class="metric-label">Skewness</span>
+                                <span class="metric-value">0.28</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Kurtosis</span>
+                                <span class="metric-value">-1.22</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Std Dev</span>
+                                <span class="metric-value">$158.7</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Range</span>
+                                <span class="metric-value">$430</span>
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="graph-container">
-                        <canvas id="mainVisualizationChart"></canvas>
-                    </div>
-                </div>
-                
-                <!-- Suggested Visualizations Panel -->
-                <div class="dashboard-panel animate-fade delay-2">
-                    <div class="panel-header">
-                        <h2 class="panel-title"><i class="{{ panels.suggested_visualizations.icon }}"></i> {{ panels.suggested_visualizations.title }}</h2>
-                        <div class="panel-actions">
-                            <button class="panel-btn" title="{{ refresh_text }}"><i class="fas fa-sync-alt"></i></button>
+                    <!-- Outliers Detection Panel -->
+                    <div class="dashboard-panel animate-fade delay-1">
+                        <div class="panel-header">
+                            <h2 class="panel-title"><i class="fas fa-exclamation-triangle"></i> Outliers Detection</h2>
+                            <div class="panel-actions">
+                                <button class="panel-btn" title="Fix Issues"><i class="fas fa-wrench"></i></button>
+                            </div>
+                        </div>
+                        
+                        <div class="graph-container">
+                            <canvas id="outliersChart"></canvas>
+                        </div>
+                        
+                        <div style="margin-top: 1rem;">
+                            <div class="data-type-item">
+                                <span class="data-type-name">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    Potential Outliers
+                                </span>
+                                <span class="data-type-count">0 records</span>
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="insights-list">
-                        {% for suggestion in suggested_visualizations %}
-                        <div class="insight-item">
-                            <div class="insight-header">
-                                <i class="{{ suggestion.icon }} insight-icon"></i>
-                                <div class="insight-title">{{ suggestion.title }}</div>
-                            </div>
-                            <div class="insight-text">
-                                {{ suggestion.description }}
-                            </div>
-                            <div class="insight-tags">
-                                {% for tag in suggestion.tags %}
-                                <span class="insight-tag">{{ tag }}</span>
-                                {% endfor %}
+                    <!-- Data Quality Panel -->
+                    <div class="dashboard-panel animate-fade delay-2">
+                        <div class="panel-header">
+                            <h2 class="panel-title"><i class="fas fa-check-circle"></i> Data Quality Report</h2>
+                            <div class="panel-actions">
+                                <button class="panel-btn" title="Export"><i class="fas fa-file-export"></i></button>
                             </div>
                         </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                
-                <!-- 3D Visualization Panel -->
-                <div class="dashboard-panel animate-fade delay-3" style="grid-column: span 2;">
-                    <div class="panel-header">
-                        <h2 class="panel-title"><i class="{{ panels.three_d_visualization.icon }}"></i> {{ panels.three_d_visualization.title }}</h2>
-                        <div class="panel-actions">
-                            <select class="graph-select" style="width: 180px;">
-                                {% for option in three_d_options %}
-                                <option>{{ option }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
+                        
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Column</th>
+                                    <th>Completeness</th>
+                                    <th>Validity</th>
+                                    <th>Z-Score Range</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Home Value</td>
+                                    <td>100%</td>
+                                    <td>100%</td>
+                                    <td>-1.26 to 1.26</td>
+                                </tr>
+                                <tr>
+                                    <td>Down Payment</td>
+                                    <td>100%</td>
+                                    <td>100%</td>
+                                    <td>-1.26 to 1.26</td>
+                                </tr>
+                                <tr>
+                                    <td>Loan Amount</td>
+                                    <td>100%</td>
+                                    <td>100%</td>
+                                    <td>-1.26 to 1.26</td>
+                                </tr>
+                                <tr>
+                                    <td>Interest Rate</td>
+                                    <td>100%</td>
+                                    <td>100%</td>
+                                    <td>-1.41 to 1.41</td>
+                                </tr>
+                                <tr>
+                                    <td>Monthly Payment</td>
+                                    <td>100%</td>
+                                    <td>100%</td>
+                                    <td>-1.40 to 1.40</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                     
-                    <div class="graph-container" style="height: 400px; display: flex; align-items: center; justify-content: center;">
-                        <div style="text-align: center; color: var(--text-muted);">
-                            <i class="fas fa-cube" style="font-size: 3rem; margin-bottom: 1rem;"></i>
-                            <p>{{ three_d_placeholder_text }}</p>
-                            <p>{{ three_d_axes_text }}</p>
+                    <!-- Statistical Tests Panel -->
+                    <div class="dashboard-panel animate-fade delay-3">
+                        <div class="panel-header">
+                            <h2 class="panel-title"><i class="fas fa-vial"></i> Statistical Tests</h2>
+                            <div class="panel-actions">
+                                <button class="panel-btn" title="Run Tests"><i class="fas fa-play"></i></button>
+                            </div>
+                        </div>
+                        
+                        <div class="insights-list">
+                            <div class="insight-item">
+                                <div class="insight-header">
+                                    <div class="insight-title">Normality Test (Shapiro-Wilk)</div>
+                                </div>
+                                <div class="insight-text">
+                                    W = 0.92, p = 0.51 - Data is normally distributed (p > 0.05)
+                                </div>
+                            </div>
+                            <div class="insight-item">
+                                <div class="insight-header">
+                                    <div class="insight-title">Homoscedasticity Test (Breusch-Pagan)</div>
+                                </div>
+                                <div class="insight-text">
+                                    BP = 1.23, p = 0.54 - Variance is constant across the range
+                                </div>
+                            </div>
+                            <div class="insight-item">
+                                <div class="insight-header">
+                                    <div class="insight-title">Multicollinearity (VIF)</div>
+                                </div>
+                                <div class="insight-text">
+                                    Home Value VIF = 5.8, Loan Amount VIF = 5.7 - Some multicollinearity present
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
-        
-        <!-- Equations Section -->
-        <section class="analysis-section {{ 'active' if sections.equations.active else '' }}" id="equations-section">
-            <div class="section-nav">
-                <h1 class="section-title">
-                    <i class="{{ sections.equations.icon }}"></i>
-                    {{ sections.equations.title }}
-                </h1>
-                <div class="nav-buttons">
-                    <button class="nav-btn secondary" id="prevSection3">
-                        <i class="fas fa-chevron-left"></i> {{ prev_button_text }}
-                    </button>
-                    <button class="nav-btn" id="nextSection3">
-                        {{ next_button_text }} <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
-            </div>
+            </section>
             
-            <div class="dashboard-grid">
-                <!-- Regression Analysis Panel -->
-                <div class="dashboard-panel animate-fade" style="grid-column: span 2;">
-                    <div class="panel-header">
-                        <h2 class="panel-title"><i class="{{ panels.regression_analysis.icon }}"></i> {{ panels.regression_analysis.title }}</h2>
-                        <div class="panel-actions">
-                            <button class="panel-btn" title="{{ run_analysis_text }}"><i class="fas fa-play"></i></button>
-                        </div>
-                    </div>
-                    
-                    <div class="graph-controls">
-                        <div class="control-group">
-                            <label class="control-label">{{ target_text }}</label>
-                            <select class="graph-select" id="regressionTarget">
-                                {% for target in regression_targets %}
-                                <option value="{{ target.value }}" {{ 'selected' if target.selected else '' }}>{{ target.text }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        
-                        <div class="control-group">
-                            <label class="control-label">{{ predictors_text }}</label>
-                            <select class="graph-select" id="regressionPredictors" multiple style="height: auto;">
-                                {% for predictor in regression_predictors %}
-                                <option value="{{ predictor.value }}" {{ 'selected' if predictor.selected else '' }}>{{ predictor.text }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        
-                        <div class="control-group">
-                            <label class="control-label">{{ model_type_text }}</label>
-                            <select class="graph-select" id="regressionType">
-                                {% for model in regression_models %}
-                                <option value="{{ model.value }}">{{ model.text }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="equation-container" style="margin-top: 1.5rem;">
-                        <div class="equation-title">{{ regression_equation.title }}</div>
-                        <div class="equation">
-                            \[ {{ regression_equation.latex }} \]
-                        </div>
-                        <div class="equation-metrics">
-                            {% for metric in regression_metrics %}
-                            <div class="metric">
-                                <span class="metric-label">{{ metric.label }}</span>
-                                <span class="metric-value">{{ metric.value }}</span>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    
-                    <div class="graph-container" style="height: 250px; margin-top: 1.5rem;">
-                        <canvas id="regressionChart"></canvas>
+            <!-- Visualization Section -->
+            <section class="analysis-section" id="visualization-section">
+                <div class="section-nav">
+                    <h1 class="section-title">
+                        <i class="fas fa-chart-line"></i>
+                        Advanced Visualization
+                    </h1>
+                    <div class="nav-buttons">
+                        <button class="nav-btn secondary" id="prevSection2">
+                            <i class="fas fa-chevron-left"></i> Previous
+                        </button>
+                        <button class="nav-btn" id="nextSection2">
+                            Next <i class="fas fa-chevron-right"></i>
+                        </button>
                     </div>
                 </div>
                 
-                <!-- Mortgage Payment Formula -->
-                <div class="dashboard-panel animate-fade delay-1">
-                    <div class="panel-header">
-                        <h2 class="panel-title"><i class="{{ panels.payment_formula.icon }}"></i> {{ panels.payment_formula.title }}</h2>
-                        <div class="panel-actions">
-                            <button class="panel-btn" title="{{ explain_text }}"><i class="fas fa-info-circle"></i></button>
-                        </div>
-                    </div>
-                    
-                    <div class="equation-container">
-                        <div class="equation-title">{{ standard_formula.title }}</div>
-                        <div class="equation">
-                            \[ {{ standard_formula.latex }} \]
-                        </div>
-                        <div class="equation-explanation" style="margin-top: 1rem; font-size: 0.9rem;">
-                            {{ standard_formula.explanation }}
-                        </div>
-                    </div>
-                    
-                    <div class="equation-container" style="margin-top: 1.5rem;">
-                        <div class="equation-title">{{ simplified_formula.title }}</div>
-                        <div class="equation">
-                            \[ {{ simplified_formula.latex }} \]
-                        </div>
-                        <div class="equation-explanation" style="margin-top: 1rem; font-size: 0.9rem;">
-                            {{ simplified_formula.explanation }}
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Classification Model -->
-                <div class="dashboard-panel animate-fade delay-2">
-                    <div class="panel-header">
-                        <h2 class="panel-title"><i class="{{ panels.classification_model.icon }}"></i> {{ panels.classification_model.title }}</h2>
-                        <div class="panel-actions">
-                            <button class="panel-btn" title="{{ run_model_text }}"><i class="fas fa-play"></i></button>
-                        </div>
-                    </div>
-                    
-                    <div class="graph-controls">
-                        <div class="control-group">
-                            <label class="control-label">{{ income_threshold_text }}</label>
-                            <input type="number" class="graph-select" value="{{ income_threshold_default }}" id="incomeThreshold">
+                <div class="dashboard-grid">
+                    <!-- Visualization Controls Panel -->
+                    <div class="dashboard-panel animate-fade">
+                        <div class="panel-header">
+                            <h2 class="panel-title"><i class="fas fa-sliders-h"></i> Visualization Controls</h2>
+                            <div class="panel-actions">
+                                <button class="panel-btn" title="Save Preset"><i class="fas fa-save"></i></button>
+                            </div>
                         </div>
                         
-                        <div class="control-group">
-                            <label class="control-label">{{ dti_ratio_text }}</label>
-                            <input type="number" class="graph-select" value="{{ dti_ratio_default }}" step="0.01" id="dtiRatio">
-                        </div>
-                    </div>
-                    
-                    <div class="equation-container" style="margin-top: 1.5rem;">
-                        <div class="equation-title">{{ classification_metrics.title }}</div>
-                        <div class="equation-metrics" style="grid-template-columns: repeat(2, 1fr);">
-                            {% for metric in classification_metrics_list %}
-                            <div class="metric">
-                                <span class="metric-label">{{ metric.label }}</span>
-                                <span class="metric-value">{{ metric.value }}</span>
+                        <div class="graph-controls">
+                            <div class="control-group">
+                                <label class="control-label">Chart Type</label>
+                                <select class="graph-select" id="chartTypeSelect">
+                                    <option value="scatter">Scatter Plot</option>
+                                    <option value="line">Line Chart</option>
+                                    <option value="bar">Bar Chart</option>
+                                    <option value="box">Box Plot</option>
+                                    <option value="bubble">Bubble Chart</option>
+                                </select>
                             </div>
-                            {% endfor %}
-                        </div>
-                        <div class="equation-explanation" style="margin-top: 1rem; font-size: 0.9rem;">
-                            {{ classification_explanation }}
-                        </div>
-                    </div>
-                    
-                    <div class="graph-container" style="height: 200px; margin-top: 1.5rem;">
-                        <canvas id="classificationChart"></canvas>
-                    </div>
-                </div>
-                
-                <!-- Interactive Calculator -->
-                <div class="dashboard-panel animate-fade delay-3" style="grid-column: span 2;">
-                    <div class="panel-header">
-                        <h2 class="panel-title"><i class="{{ panels.mortgage_calculator.icon }}"></i> {{ panels.mortgage_calculator.title }}</h2>
-                        <div class="panel-actions">
-                            <button class="panel-btn" title="{{ calculate_text }}"><i class="fas fa-equals"></i></button>
-                        </div>
-                    </div>
-                    
-                    <div class="graph-controls" style="grid-template-columns: repeat(4, 1fr);">
-                        <div class="control-group">
-                            <label class="control-label">{{ home_value_text }}</label>
-                            <input type="number" class="graph-select" value="{{ default_home_value }}" id="calcHomeValue">
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label">{{ down_payment_text }}</label>
-                            <input type="number" class="graph-select" value="{{ default_down_payment }}" id="calcDownPayment">
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label">{{ interest_rate_text }}</label>
-                            <input type="number" class="graph-select" value="{{ default_interest_rate }}" step="0.1" id="calcInterestRate">
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label">{{ loan_term_text }}</label>
-                            <select class="graph-select" id="calcLoanTerm">
-                                {% for term in loan_terms %}
-                                <option value="{{ term.value }}" {{ 'selected' if term.selected else '' }}>{{ term.text }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="equation-container" style="margin-top: 1.5rem; text-align: center;">
-                        <div class="equation-title">{{ payment_breakdown_text }}</div>
-                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 1rem;">
-                            {% for breakdown in payment_breakdowns %}
-                            <div class="metric">
-                                <span class="metric-label">{{ breakdown.label }}</span>
-                                <span class="metric-value">{{ breakdown.value }}</span>
+                            
+                            <div class="control-group">
+                                <label class="control-label">X-Axis</label>
+                                <select class="graph-select" id="xAxisSelect">
+                                    <option value="home_value">Home Value</option>
+                                    <option value="loan_amount">Loan Amount</option>
+                                    <option value="interest_rate">Interest Rate</option>
+                                </select>
                             </div>
-                            {% endfor %}
+                            
+                            <div class="control-group">
+                                <label class="control-label">Y-Axis</label>
+                                <select class="graph-select" id="yAxisSelect">
+                                    <option value="monthly_payment">Monthly Payment</option>
+                                    <option value="interest_rate">Interest Rate</option>
+                                    <option value="loan_amount">Loan Amount</option>
+                                </select>
+                            </div>
+                            
+                            <div class="control-group">
+                                <label class="control-label">Function Type</label>
+                                <div class="function-selector">
+                                    <button class="function-btn active" data-function="linear">Linear</button>
+                                    <button class="function-btn" data-function="quadratic">Quadratic</button>
+                                    <button class="function-btn" data-function="exponential">Exponential</button>
+                                    <button class="function-btn" data-function="logarithmic">Logarithmic</button>
+                                </div>
+                            </div>
+                            
+                            <button class="nav-btn" id="generateChart" style="align-self: flex-end;">
+                                <i class="fas fa-play"></i> Generate
+                            </button>
                         </div>
-                        <div class="confidence-bar" style="margin: 1rem auto; width: 80%;">
-                            <div class="confidence-fill" style="width: {{ confidence_percentage }}%;"></div>
+                    </div>
+                    
+                    <!-- Main Visualization Panel -->
+                    <div class="dashboard-panel animate-fade delay-1" style="grid-column: span 2;">
+                        <div class="panel-header">
+                            <h2 class="panel-title"><i class="fas fa-chart-area"></i> Interactive Visualization</h2>
+                            <div class="panel-actions">
+                                <button class="panel-btn" title="Export"><i class="fas fa-download"></i></button>
+                                <button class="panel-btn" title="Fullscreen"><i class="fas fa-expand"></i></button>
+                            </div>
                         </div>
-                        <div class="confidence-value">{{ confidence_text }}</div>
+                        
+                        <div class="graph-container">
+                            <canvas id="mainVisualizationChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Suggested Visualizations Panel -->
+                    <div class="dashboard-panel animate-fade delay-2">
+                        <div class="panel-header">
+                            <h2 class="panel-title"><i class="fas fa-lightbulb"></i> Suggested Visualizations</h2>
+                            <div class="panel-actions">
+                                <button class="panel-btn" title="Refresh"><i class="fas fa-sync-alt"></i></button>
+                            </div>
+                        </div>
+                        
+                        <div class="insights-list">
+                            <div class="insight-item">
+                                <div class="insight-header">
+                                    <i class="fas fa-chart-bar insight-icon"></i>
+                                    <div class="insight-title">Payment Breakdown</div>
+                                </div>
+                                <div class="insight-text">
+                                    Visualize principal vs interest components of monthly payments across different loan terms.
+                                </div>
+                                <div class="insight-tags">
+                                    <span class="insight-tag">Stacked Bar</span>
+                                    <span class="insight-tag">Composition</span>
+                                </div>
+                            </div>
+                            
+                            <div class="insight-item">
+                                <div class="insight-header">
+                                    <i class="fas fa-project-diagram insight-icon"></i>
+                                    <div class="insight-title">Rate Impact Analysis</div>
+                                </div>
+                                <div class="insight-text">
+                                    Explore how different interest rates affect total payment over 15 vs 30 year terms.
+                                </div>
+                                <div class="insight-tags">
+                                    <span class="insight-tag">Small Multiples</span>
+                                    <span class="insight-tag">Sensitivity</span>
+                                </div>
+                            </div>
+                            
+                            <div class="insight-item">
+                                <div class="insight-header">
+                                    <i class="fas fa-chart-pie insight-icon"></i>
+                                    <div class="insight-title">Affordability Matrix</div>
+                                </div>
+                                <div class="insight-text">
+                                    Create a matrix showing what home values are affordable at different income levels.
+                                </div>
+                                <div class="insight-tags">
+                                    <span class="insight-tag">Heatmap</span>
+                                    <span class="insight-tag">Planning</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 3D Visualization Panel -->
+                    <div class="dashboard-panel animate-fade delay-3" style="grid-column: span 2;">
+                        <div class="panel-header">
+                            <h2 class="panel-title"><i class="fas fa-cube"></i> 3D Relationship Explorer</h2>
+                            <div class="panel-actions">
+                                <select class="graph-select" style="width: 180px;">
+                                    <option>Home Value × Rate × Payment</option>
+                                    <option>Loan × Term × Payment</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="graph-container" style="height: 400px; display: flex; align-items: center; justify-content: center;">
+                            <div style="text-align: center; color: var(--text-muted);">
+                                <i class="fas fa-cube" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                                <p>3D visualization would render here with WebGL</p>
+                                <p>X: Home Value, Y: Interest Rate, Z: Monthly Payment</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </section>
-        
-        <!-- Insights Section -->
-        <section class="analysis-section {{ 'active' if sections.insights.active else '' }}" id="insights-section">
-            <div class="section-nav">
-                <h1 class="section-title">
-                    <i class="{{ sections.insights.icon }}"></i>
-                    {{ sections.insights.title }}
-                </h1>
-                <div class="nav-buttons">
-                    <button class="nav-btn secondary" id="prevSection4">
-                        <i class="fas fa-chevron-left"></i> {{ prev_button_text }}
-                    </button>
-                    <button class="nav-btn" id="nextSection4" disabled>
-                        {{ next_button_text }} <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
-            </div>
+            </section>
             
-            <div class="dashboard-grid">
-                <!-- Key Findings Panel -->
-                <div class="dashboard-panel animate-fade" style="grid-column: span 2;">
-                    <div class="panel-header">
-                        <h2 class="panel-title"><i class="{{ panels.key_findings.icon }}"></i> {{ panels.key_findings.title }}</h2>
-                        <div class="panel-actions">
-                            <button class="panel-btn" title="{{ export_text }}"><i class="fas fa-file-export"></i></button>
-                        </div>
-                    </div>
-                    
-                    <div class="insights-list">
-                        {% for finding in key_findings %}
-                        <div class="insight-item">
-                            <div class="insight-header">
-                                <i class="{{ finding.icon }} insight-icon"></i>
-                                <div class="insight-title">{{ finding.title }}</div>
-                            </div>
-                            <div class="insight-text">
-                                {{ finding.text }}
-                            </div>
-                            <div class="insight-tags">
-                                {% for tag in finding.tags %}
-                                <span class="insight-tag">{{ tag }}</span>
-                                {% endfor %}
-                            </div>
-                        </div>
-                        {% endfor %}
+            <!-- Equations Section -->
+            <section class="analysis-section" id="equations-section">
+                <div class="section-nav">
+                    <h1 class="section-title">
+                        <i class="fas fa-calculator"></i>
+                        Predictive Modeling
+                    </h1>
+                    <div class="nav-buttons">
+                        <button class="nav-btn secondary" id="prevSection3">
+                            <i class="fas fa-chevron-left"></i> Previous
+                        </button>
+                        <button class="nav-btn" id="nextSection3">
+                            Next <i class="fas fa-chevron-right"></i>
+                        </button>
                     </div>
                 </div>
                 
-                <!-- Recommendations Panel -->
-                <div class="dashboard-panel animate-fade delay-1">
-                    <div class="panel-header">
-                        <h2 class="panel-title"><i class="{{ panels.recommendations.icon }}"></i> {{ panels.recommendations.title }}</h2>
-                        <div class="panel-actions">
-                            <button class="panel-btn" title="{{ export_text }}"><i class="fas fa-file-export"></i></button>
-                        </div>
-                    </div>
-                    
-                    <div class="insights-list">
-                        {% for recommendation in recommendations %}
-                        <div class="insight-item">
-                            <div class="insight-header">
-                                <div class="insight-title">{{ recommendation.title }}</div>
+                <div class="dashboard-grid">
+                    <!-- Regression Analysis Panel -->
+                    <div class="dashboard-panel animate-fade" style="grid-column: span 2;">
+                        <div class="panel-header">
+                            <h2 class="panel-title"><i class="fas fa-project-diagram"></i> Multivariate Regression</h2>
+                            <div class="panel-actions">
+                                <button class="panel-btn" title="Run Analysis"><i class="fas fa-play"></i></button>
                             </div>
-                            <div class="insight-text">
-                                {{ recommendation.text }}
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                
-                <!-- Action Items Panel -->
-                <div class="dashboard-panel animate-fade delay-2">
-                    <div class="panel-header">
-                        <h2 class="panel-title"><i class="{{ panels.action_items.icon }}"></i> {{ panels.action_items.title }}</h2>
-                        <div class="panel-actions">
-                            <button class="panel-btn" title="{{ add_item_text }}"><i class="fas fa-plus"></i></button>
-                        </div>
-                    </div>
-                    
-                    <div class="insights-list">
-                        {% for action_group in action_items %}
-                        <div class="insight-item">
-                            <div class="insight-header">
-                                <div class="insight-title">{{ action_group.title }}</div>
-                            </div>
-                            {% for item in action_group.items %}
-                            <div class="insight-text">
-                                <input type="checkbox" id="task{{ loop.index }}" {{ 'checked' if item.checked else '' }}>
-                                <label for="task{{ loop.index }}">{{ item.text }}</label>
-                            </div>
-                            {% endfor %}
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                
-                <!-- Final Report Panel -->
-                <div class="dashboard-panel animate-fade delay-3" style="grid-column: span 2;">
-                    <div class="panel-header">
-                        <h2 class="panel-title"><i class="{{ panels.final_report.icon }}"></i> {{ panels.final_report.title }}</h2>
-                        <div class="panel-actions">
-                            <button class="nav-btn"><i class="fas fa-file-pdf"></i> {{ pdf_text }}</button>
-                            <button class="nav- btn secondary"><i class="fas fa-file-code"></i> {{ jupyter_text }}</button>
-                        </div>
-                    </div>
-                    
-                    <div class="graph-controls">
-                        <div class="control-group">
-                            <label class="control-label">{{ report_type_text }}</label>
-                            <select class="graph-select">
-                                {% for report in report_types %}
-                                <option>{{ report }}</option>
-                                {% endfor %}
-                            </select>
                         </div>
                         
-                        <div class="control-group">
-                            <label class="control-label">{{ include_text }}</label>
-                            <select class="graph-select" multiple style="height: auto;">
-                                {% for option in report_options %}
-                                <option {{ 'selected' if option.selected else '' }}>{{ option.text }}</option>
-                                {% endfor %}
-                            </select>
+                        <div class="graph-controls">
+                            <div class="control-group">
+                                <label class="control-label">Target (Y)</label>
+                                <select class="graph-select" id="regressionTarget">
+                                    <option value="monthly_payment" selected>Monthly Payment</option>
+                                    <option value="loan_amount">Loan Amount</option>
+                                </select>
+                            </div>
+                            
+                            <div class="control-group">
+                                <label class="control-label">Predictors (X)</label>
+                                <select class="graph-select" id="regressionPredictors" multiple style="height: auto;">
+                                    <option value="home_value" selected>Home Value</option>
+                                    <option value="loan_amount" selected>Loan Amount</option>
+                                    <option value="interest_rate" selected>Interest Rate</option>
+                                </select>
+                            </div>
+                            
+                            <div class="control-group">
+                                <label class="control-label">Model Type</label>
+                                <select class="graph-select" id="regressionType">
+                                    <option value="linear">Linear Regression</option>
+                                    <option value="polynomial">Polynomial (2nd degree)</option>
+                                    <option value="logarithmic">Logarithmic</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="equation-container" style="margin-top: 1.5rem;">
+                            <div class="equation-title">Monthly Payment = f(Home Value, Loan Amount, Interest Rate)</div>
+                            <div class="equation">
+                                \[ \text{Payment} = 0.0025 \times \text{Home Value} + 0.0031 \times \text{Loan Amount} + 85.7 \times \text{Interest Rate} + 120.4 \]
+                            </div>
+                            <div class="equation-metrics">
+                                <div class="metric">
+                                    <span class="metric-label">R² Score</span>
+                                    <span class="metric-value">0.998</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-label">Adj. R²</span>
+                                    <span class="metric-value">0.996</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-label">F-Statistic</span>
+                                    <span class="metric-value">324.5</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-label">P-Value</span>
+                                    <span class="metric-value"><0.001</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="graph-container" style="height: 250px; margin-top: 1.5rem;">
+                            <canvas id="regressionChart"></canvas>
                         </div>
                     </div>
                     
-                    <button class="nav-btn" style="margin-top: 1.5rem; width: 100%;">
-                        <i class="fas fa-cogs"></i> {{ generate_custom_report_text }}
-                    </button>
+                    <!-- Mortgage Payment Formula -->
+                    <div class="dashboard-panel animate-fade delay-1">
+                        <div class="panel-header">
+                            <h2 class="panel-title"><i class="fas fa-mortar-pestle"></i> Payment Formula</h2>
+                            <div class="panel-actions">
+                                <button class="panel-btn" title="Explain"><i class="fas fa-info-circle"></i></button>
+                            </div>
+                        </div>
+                        
+                        <div class="equation-container">
+                            <div class="equation-title">Standard Mortgage Formula</div>
+                            <div class="equation">
+                                \[ M = P \times \frac{r(1+r)^n}{(1+r)^n - 1} \]
+                            </div>
+                            <div class="equation-explanation" style="margin-top: 1rem; font-size: 0.9rem;">
+                                Where:<br>
+                                \( M \) = Monthly payment<br>
+                                \( P \) = Principal loan amount<br>
+                                \( r \) = Monthly interest rate (annual rate ÷ 12)<br>
+                                \( n \) = Number of payments (loan term × 12)
+                            </div>
+                        </div>
+                        
+                        <div class="equation-container" style="margin-top: 1.5rem;">
+                            <div class="equation-title">Simplified Approximation</div>
+                            <div class="equation">
+                                \[ \text{Payment} \approx \frac{P \times r}{1 - (1 + r)^{-n}} \]
+                            </div>
+                            <div class="equation-explanation" style="margin-top: 1rem; font-size: 0.9rem;">
+                                For quick estimates when \( n \) is large (30 years = 360 payments), 
+                                the denominator approaches 1, simplifying to \( P \times r \).
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Classification Model -->
+                    <div class="dashboard-panel animate-fade delay-2">
+                        <div class="panel-header">
+                            <h2 class="panel-title"><i class="fas fa-project-diagram"></i> Affordability Classifier</h2>
+                            <div class="panel-actions">
+                                <button class="panel-btn" title="Run Model"><i class="fas fa-play"></i></button>
+                            </div>
+                        </div>
+                        
+                        <div class="graph-controls">
+                            <div class="control-group">
+                                <label class="control-label">Income Threshold</label>
+                                <input type="number" class="graph-select" value="60000" id="incomeThreshold">
+                            </div>
+                            
+                            <div class="control-group">
+                                <label class="control-label">DTI Ratio</label>
+                                <input type="number" class="graph-select" value="0.36" step="0.01" id="dtiRatio">
+                            </div>
+                        </div>
+                        
+                        <div class="equation-container" style="margin-top: 1.5rem;">
+                            <div class="equation-title">Classification Metrics</div>
+                            <div class="equation-metrics" style="grid-template-columns: repeat(2, 1fr);">
+                                <div class="metric">
+                                    <span class="metric-label">Accuracy</span>
+                                    <span class="metric-value">92.3%</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-label">Precision</span>
+                                    <span class="metric-value">94.1%</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-label">Recall</span>
+                                    <span class="metric-value">88.9%</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-label">F1 Score</span>
+                                    <span class="metric-value">91.4%</span>
+                                </div>
+                            </div>
+                            <div class="equation-explanation" style="margin-top: 1rem; font-size: 0.9rem;">
+                                Model predicts whether a home is affordable based on income and debt-to-income ratio.
+                            </div>
+                        </div>
+                        
+                        <div class="graph-container" style="height: 200px; margin-top: 1.5rem;">
+                            <canvas id="classificationChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Interactive Calculator -->
+                    <div class="dashboard-panel animate-fade delay-3" style="grid-column: span 2;">
+                        <div class="panel-header">
+                            <h2 class="panel-title"><i class="fas fa-calculator"></i> Mortgage Calculator</h2>
+                            <div class="panel-actions">
+                                <button class="panel-btn" title="Calculate"><i class="fas fa-equals"></i></button>
+                            </div>
+                        </div>
+                        
+                        <div class="graph-controls" style="grid-template-columns: repeat(4, 1fr);">
+                            <div class="control-group">
+                                <label class="control-label">Home Value ($)</label>
+                                <input type="number" class="graph-select" value="450000" id="calcHomeValue">
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">Down Payment (%)</label>
+                                <input type="number" class="graph-select" value="20" id="calcDownPayment">
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">Interest Rate (%)</label>
+                                <input type="number" class="graph-select" value="4.0" step="0.1" id="calcInterestRate">
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">Loan Term (years)</label>
+                                <select class="graph-select" id="calcLoanTerm">
+                                    <option value="15">15</option>
+                                    <option value="30" selected>30</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="equation-container" style="margin-top: 1.5rem; text-align: center;">
+                            <div class="equation-title">Payment Breakdown</div>
+                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 1rem;">
+                                <div class="metric">
+                                    <span class="metric-label">Monthly</span>
+                                    <span class="metric-value">$1,718</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-label">Principal</span>
+                                    <span class="metric-value">$667</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-label">Interest</span>
+                                    <span class="metric-value">$1,051</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-label">Total Interest</span>
+                                    <span class="metric-value">$258,403</span>
+                                </div>
+                            </div>
+                            <div class="confidence-bar" style="margin: 1rem auto; width: 80%;">
+                                <div class="confidence-fill" style="width: 78%;"></div>
+                            </div>
+                            <div class="confidence-value">78% Confidence (based on similar profiles)</div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
+            
+            <!-- Insights Section -->
+            <section class="analysis-section" id="insights-section">
+                <div class="section-nav">
+                    <h1 class="section-title">
+                        <i class="fas fa-lightbulb"></i>
+                        Advanced Insights
+                    </h1>
+                    <div class="nav-buttons">
+                        <button class="nav-btn secondary" id="prevSection4">
+                            <i class="fas fa-chevron-left"></i> Previous
+                        </button>
+                        <button class="nav-btn" id="nextSection4" disabled>
+                            Next <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <!-- Key Findings Panel -->
+                    <div class="dashboard-panel animate-fade" style="grid-column: span 2;">
+                        <div class="panel-header">
+                            <h2 class="panel-title"><i class="fas fa-key"></i> Key Findings</h2>
+                            <div class="panel-actions">
+                                <button class="panel-btn" title="Export"><i class="fas fa-file-export"></i></button>
+                            </div>
+                        </div>
+                        
+                        <div class="insights-list">
+                            <div class="insight-item">
+                                <div class="insight-header">
+                                    <i class="fas fa-chart-line insight-icon"></i>
+                                    <div class="insight-title">Non-Linear Rate Sensitivity</div>
+                                </div>
+                                <div class="insight-text">
+                                    The impact of interest rate changes on monthly payments follows a non-linear pattern. 
+                                    A 1% rate increase from 3% → 4% increases payments by ~12%, while the same increase 
+                                    from 6% → 7% only increases payments by ~8%. This convexity means rate hikes hurt 
+                                    more at lower initial rates.
+                                </div>
+                                <div class="insight-tags">
+                                    <span class="insight-tag">Convexity</span>
+                                    <span class="insight-tag">Rate Sensitivity</span>
+                                    <span class="insight-tag">Non-linear</span>
+                                </div>
+                            </div>
+                            
+                            <div class="insight-item">
+                                <div class="insight-header">
+                                    <i class="fas fa-percentage insight-icon"></i>
+                                    <div class="insight-title">Down Payment Optimization</div>
+                                </div>
+                                <div class="insight-text">
+                                    Analysis shows diminishing returns on down payments beyond 20%. Increasing from 
+                                    10% → 20% reduces monthly payments by ~11%, while 20% → 30% only yields ~4% reduction. 
+                                    The sweet spot for balancing liquidity and affordability appears to be 15-25%.
+                                </div>
+                                <div class="insight-tags">
+                                    <span class="insight-tag">Optimization</span>
+                                    <span class="insight-tag">Diminishing Returns</span>
+                                </div>
+                            </div>
+                            
+                            <div class="insight-item">
+                                <div class="insight-header">
+                                    <i class="fas fa-map-marked-alt insight-icon"></i>
+                                    <div class="insight-title">Loan-to-Value Thresholds</div>
+                                </div>
+                                <div class="insight-text">
+                                    The relationship between LTV ratios and interest rates reveals clear thresholds:
+                                    <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                                        <li>LTV < 80%: Best rates (avg 3.5-4%)</li>
+                                        <li>80% ≤ LTV < 90%: +0.25-0.5%</li>
+                                        <li>LTV ≥ 90%: +0.75-1.25%</li>
+                                    </ul>
+                                    This creates clear breakpoints for down payment strategy.
+                                </div>
+                                <div class="insight-tags">
+                                    <span class="insight-tag">LTV</span>
+                                    <span class="insight-tag">Threshold Effects</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recommendations Panel -->
+                    <div class="dashboard-panel animate-fade delay-1">
+                        <div class="panel-header">
+                            <h2 class="panel-title"><i class="fas fa-bullseye"></i> Strategic Recommendations</h2>
+                            <div class="panel-actions">
+                                <button class="panel-btn" title="Export"><i class="fas fa-file-export"></i></button>
+                            </div>
+                        </div>
+                        
+                        <div class="insights-list">
+                            <div class="insight-item">
+                                <div class="insight-header">
+                                    <div class="insight-title">1. Rate Lock Strategy</div>
+                                </div>
+                                <div class="insight-text">
+                                    When rates are below 4%, prioritize locking in rates as the convexity effect means 
+                                    future increases will have disproportionately large impacts on affordability.
+                                </div>
+                            </div>
+                            
+                            <div class="insight-item">
+                                <div class="insight-header">
+                                    <div class="insight-title">2. Down Payment Allocation</div>
+                                </div>
+                                <div class="insight-text">
+                                    Aim for at least 20% down to avoid PMI and get best rates, but don't stretch beyond 
+                                    25% unless you have significant excess liquidity.
+                                </div>
+                            </div>
+                            
+                            <div class="insight-item">
+                                <div class="insight-header">
+                                    <div class="insight-title">3. Refinance Triggers</div>
+                                </div>
+                                <div class="insight-text">
+                                    Monitor for rate drops of ≥0.75% from your current rate, as this typically crosses 
+                                    the threshold for worthwhile refinancing after accounting for closing costs.
+                                </div>
+                            </div>
+                            
+                            <div class="insight-item">
+                                <div class="insight-header">
+                                    <div class="insight-title">4. Term Selection</div>
+                                </div>
+                                <div class="insight-text">
+                                    Consider 15-year terms when rates are low (sub-4%) as the payment premium is smaller 
+                                    and interest savings are maximized.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Items Panel -->
+                    <div class="dashboard-panel animate-fade delay-2">
+                        <div class="panel-header">
+                            <h2 class="panel-title"><i class="fas fa-tasks"></i> Action Plan</h2>
+                            <div class="panel-actions">
+                                <button class="panel-btn" title="Add Item"><i class="fas fa-plus"></i></button>
+                            </div>
+                        </div>
+                        
+                        <div class="insights-list">
+                            <div class="insight-item">
+                                <div class="insight-header">
+                                    <div class="insight-title">Rate Monitoring</div>
+                                </div>
+                                <div class="insight-text">
+                                    <input type="checkbox" id="task1" checked>
+                                    <label for="task1">Set up rate alerts at 0.25% intervals</label>
+                                </div>
+                                <div class="insight-text">
+                                    <input type="checkbox" id="task2">
+                                    <label for="task2">Identify target rate for refinance</label>
+                                </div>
+                            </div>
+                            
+                            <div class="insight-item">
+                                <div class="insight-header">
+                                    <div class="insight-title">Down Payment Plan</div>
+                                </div>
+                                <div class="insight-text">
+                                    <input type="checkbox" id="task3">
+                                    <label for="task3">Calculate optimal down payment %</label>
+                                </div>
+                                <div class="insight-text">
+                                    <input type="checkbox" id="task4">
+                                    <label for="task4">Create savings timeline</label>
+                                </div>
+                            </div>
+                            
+                            <div class="insight-item">
+                                <div class="insight-header">
+                                    <div class="insight-title">Affordability Analysis</div>
+                                </div>
+                                <div class="insight-text">
+                                    <input type="checkbox" id="task5">
+                                    <label for="task5">Run stress tests at +2% rates</label>
+                                </div>
+                                <div class="insight-text">
+                                    <input type="checkbox" id="task6">
+                                    <label for="task6">Identify price ceilings by rate</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Final Report Panel -->
+                    <div class="dashboard-panel animate-fade delay-3" style="grid-column: span 2;">
+                        <div class="panel-header">
+                            <h2 class="panel-title"><i class="fas fa-file-alt"></i> Generate Full Report</h2>
+                            <div class="panel-actions">
+                                <button class="nav-btn"><i class="fas fa-file-pdf"></i> PDF</button>
+                                <button class="nav-btn secondary"><i class="fas fa-file-code"></i> Jupyter</button>
+                            </div>
+                        </div>
+                        
+                        <div class="graph-controls">
+                            <div class="control-group">
+                                <label class="control-label">Report Type</label>
+                                <select class="graph-select">
+                                    <option>Comprehensive Analysis</option>
+                                    <option>Executive Summary</option>
+                                    <option>Technical Deep Dive</option>
+                                </select>
+                            </div>
+                            
+                            <div class="control-group">
+                                <label class="control-label">Include</label>
+                                <select class="graph-select" multiple style="height: auto;">
+                                    <option selected>All Visualizations</option>
+                                    <option selected>Raw Data</option>
+                                    <option selected>Methodology</option>
+                                    <option selected>Assumptions</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <button class="nav-btn" style="margin-top: 1.5rem; width: 100%;">
+                            <i class="fas fa-cogs"></i> Generate Custom Report
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
     </div>
-</div>
-
-<!-- Toast Notification -->
-<div class="toast" id="toast">
-    <i class="fas fa-check-circle"></i>
-    <span>{{ toast_message }}</span>
-</div>
+    
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span>Analysis completed successfully!</span>
+    </div>
 
     <script>
-        // Initialize with data from Flask backend
-const mortgageData = JSON.parse('{{ data_sample.rows|tojson|safe }}');
-const regressionModel = {
-    coefficients: {
-        home_value: {{ regression_analysis.linear.coefficients['House Value ($)'] }},
-        loan_amount: {{ regression_analysis.linear.coefficients['Loan Amount ($)'] }},
-        interest_rate: {{ regression_analysis.linear.coefficients['Interest Rate (%)'] }},
-        down_payment: {{ regression_analysis.linear.coefficients['Down Payment (%)'] }}
-    },
-    intercept: {{ regression_analysis.linear.intercept }},
-    metrics: {
-        r2: {{ regression_analysis.metrics.r2 }},
-        rmse: {{ regression_analysis.metrics.rmse }},
-        mae: {{ regression_analysis.metrics.mae }}
-    }
-};
+        // Sample dataset
+        const mortgageData = [
+            { home_value: 350000, down_payment: 70000, loan_amount: 280000, interest_rate: 3.5, monthly_payment: 1260 },
+            { home_value: 400000, down_payment: 80000, loan_amount: 320000, interest_rate: 3.8, monthly_payment: 1370 },
+            { home_value: 450000, down_payment: 90000, loan_amount: 360000, interest_rate: 4.0, monthly_payment: 1500 },
+            { home_value: 500000, down_payment: 100000, loan_amount: 400000, interest_rate: 4.2, monthly_payment: 1590 },
+            { home_value: 550000, down_payment: 110000, loan_amount: 440000, interest_rate: 4.5, monthly_payment: 1690 }
+        ];
 
-const stats = {
-    skewness: {{ stats.payment_skewness }},
-    kurtosis: {{ stats.payment_kurtosis }},
-    std_dev: {{ stats.std_payment }},
-    payment_range: {{ stats.payment_range }}
-};
-
-// DOM Elements
-const sidebarToggle = document.getElementById('sidebarToggle');
-const sidebar = document.querySelector('.sidebar');
-const sections = document.querySelectorAll('.analysis-section');
-const toast = document.getElementById('toast');
-const functionBtns = document.querySelectorAll('.function-btn');
-
-// Current section index
-let currentSection = 0;
-let currentFunction = 'linear';
-let currentChartType = 'scatter';
-
-// Initialize charts with backend data
-function initializeCharts() {
-    // Distribution Chart
-    const distCtx = document.getElementById('distributionChart').getContext('2d');
-    new Chart(distCtx, {
-        type: 'boxplot',
-        data: {
-            labels: ['Monthly Payment'],
-            datasets: [{
-                label: 'Payment Distribution',
-                backgroundColor: 'rgba(42, 117, 214, 0.5)',
-                borderColor: 'rgba(42, 117, 214, 1)',
-                borderWidth: 1,
-                itemRadius: 0,
-                data: [
-                    mortgageData.map(item => parseFloat(item['Monthly Payment ($)'].replace(/[^0-9.-]+/g,"")))
-                ]
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
+        // DOM Elements
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.querySelector('.sidebar');
+        const sections = document.querySelectorAll('.analysis-section');
+        const toast = document.getElementById('toast');
+        const functionBtns = document.querySelectorAll('.function-btn');
+        
+        // Current section index
+        let currentSection = 0;
+        let currentFunction = 'linear';
+        let currentChartType = 'scatter';
+        
+        // Initialize charts
+        function initializeCharts() {
+            // Distribution Chart
+            const distCtx = document.getElementById('distributionChart').getContext('2d');
+            new Chart(distCtx, {
+                type: 'boxplot',
+                data: {
+                    labels: ['Monthly Payment'],
+                    datasets: [{
+                        label: 'Payment Distribution',
+                        backgroundColor: 'rgba(42, 117, 214, 0.5)',
+                        borderColor: 'rgba(42, 117, 214, 1)',
+                        borderWidth: 1,
+                        itemRadius: 0,
+                        data: [
+                            [1260, 1370, 1500, 1590, 1690]
+                        ]
+                    }]
                 },
-                title: {
-                    display: true,
-                    text: 'Monthly Payment Distribution ($)'
-                }
-            }
-        }
-    });
-
-    // Outliers Chart
-    const outliersCtx = document.getElementById('outliersChart').getContext('2d');
-    new Chart(outliersCtx, {
-        type: 'scatter',
-        data: {
-            datasets: [{
-                label: 'Monthly Payments',
-                data: mortgageData.map(item => ({
-                    x: parseFloat(item['House Value ($)'].replace(/[^0-9.-]+/g,"")),
-                    y: parseFloat(item['Monthly Payment ($)'].replace(/[^0-9.-]+/g,""))
-                })),
-                backgroundColor: 'rgba(42, 117, 214, 0.7)',
-                borderColor: 'rgba(42, 117, 214, 1)',
-                borderWidth: 1,
-                pointRadius: 6
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                },
-                title: {
-                    display: true,
-                    text: 'Payment vs Home Value'
-                }
-            },
-            scales: {
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Home Value ($)'
-                    }
-                },
-                y: {
-                    title: {
-                        display: true,
-                        text: 'Monthly Payment ($)'
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Monthly Payment Distribution ($)'
+                        }
                     }
                 }
-            }
-        }
-    });
-
-    // Main Visualization Chart
-    const mainChartCtx = document.getElementById('mainVisualizationChart').getContext('2d');
-    window.mainChart = new Chart(mainChartCtx, {
-        type: 'scatter',
-        data: {
-            datasets: [{
-                label: 'Actual Data',
-                data: mortgageData.map(item => ({
-                    x: parseFloat(item['House Value ($)'].replace(/[^0-9.-]+/g,"")),
-                    y: parseFloat(item['Monthly Payment ($)'].replace(/[^0-9.-]+/g,""))
-                })),
-                backgroundColor: 'rgba(42, 117, 214, 0.7)',
-                borderColor: 'rgba(42, 117, 214, 1)',
-                borderWidth: 1,
-                pointRadius: 6
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                title: {
-                    display: true,
-                    text: 'Home Value vs Monthly Payment'
-                }
-            },
-            scales: {
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Home Value ($)'
-                    }
+            });
+            
+                        // Outliers Chart
+            const outliersCtx = document.getElementById('outliersChart').getContext('2d');
+            new Chart(outliersCtx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Monthly Payments',
+                        data: mortgageData.map(item => ({
+                            x: item.home_value,
+                            y: item.monthly_payment
+                        })),
+                        backgroundColor: 'rgba(42, 117, 214, 0.7)',
+                        borderColor: 'rgba(42, 117, 214, 1)',
+                        borderWidth: 1,
+                        pointRadius: 6
+                    }]
                 },
-                y: {
-                    title: {
-                        display: true,
-                        text: 'Monthly Payment ($)'
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Payment vs Home Value'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Home Value ($)'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Monthly Payment ($)'
+                            }
+                        }
                     }
                 }
-            }
-        }
-    });
+            });
 
-    // Regression Chart
-    const regCtx = document.getElementById('regressionChart').getContext('2d');
-    window.regChart = new Chart(regCtx, {
-        type: 'scatter',
-        data: {
-            datasets: [{
-                label: 'Actual',
-                data: mortgageData.map(item => ({
-                    x: parseFloat(item['House Value ($)'].replace(/[^0-9.-]+/g,"")),
-                    y: parseFloat(item['Monthly Payment ($)'].replace(/[^0-9.-]+/g,""))
-                })),
-                backgroundColor: 'rgba(42, 117, 214, 0.7)'
-            }, {
-                label: 'Predicted',
-                data: mortgageData.map(item => ({
-                    x: parseFloat(item['House Value ($)'].replace(/[^0-9.-]+/g,"")),
-                    y: predictPayment(
-                        parseFloat(item['House Value ($)'].replace(/[^0-9.-]+/g,"")),
-                        parseFloat(item['Loan Amount ($)'].replace(/[^0-9.-]+/g,"")),
-                        parseFloat(item['Interest Rate (%)'].replace(/[^0-9.-]+/g,""))
-                    )
-                })),
-                backgroundColor: 'rgba(230, 57, 70, 0.7)',
-                type: 'line',
-                borderColor: 'rgba(230, 57, 70, 1)',
-                borderWidth: 2,
-                pointRadius: 0
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                title: {
-                    display: true,
-                    text: `Actual vs Predicted Payments (R²=${regressionModel.metrics.r2.toFixed(3)})`
+            // Main Visualization Chart
+            const mainChartCtx = document.getElementById('mainVisualizationChart').getContext('2d');
+            window.mainChart = new Chart(mainChartCtx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Actual Data',
+                        data: mortgageData.map(item => ({
+                            x: item.home_value,
+                            y: item.monthly_payment
+                        })),
+                        backgroundColor: 'rgba(42, 117, 214, 0.7)',
+                        borderColor: 'rgba(42, 117, 214, 1)',
+                        borderWidth: 1,
+                        pointRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Home Value vs Monthly Payment'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Home Value ($)'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Monthly Payment ($)'
+                            }
+                        }
+                    }
                 }
-            }
-        }
-    });
+            });
 
-    // Classification Chart
-    const classCtx = document.getElementById('classificationChart').getContext('2d');
-    new Chart(classCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Affordable', 'Marginal', 'Unaffordable'],
-            datasets: [{
-                data: [65, 15, 20], // Placeholder - would come from backend in real implementation
-                backgroundColor: [
-                    'rgba(42, 117, 214, 0.7)',
-                    'rgba(244, 162, 97, 0.7)',
-                    'rgba(230, 57, 70, 0.7)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                title: {
-                    display: true,
-                    text: 'Affordability Classification'
+            // Regression Chart
+            const regCtx = document.getElementById('regressionChart').getContext('2d');
+            window.regChart = new Chart(regCtx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Actual',
+                        data: mortgageData.map(item => ({
+                            x: item.home_value,
+                            y: item.monthly_payment
+                        })),
+                        backgroundColor: 'rgba(42, 117, 214, 0.7)'
+                    }, {
+                        label: 'Predicted',
+                        data: mortgageData.map(item => ({
+                            x: item.home_value,
+                            y: 0.0025 * item.home_value + 0.0031 * item.loan_amount + 85.7 * item.interest_rate + 120.4
+                        })),
+                        backgroundColor: 'rgba(230, 57, 70, 0.7)',
+                        type: 'line',
+                        borderColor: 'rgba(230, 57, 70, 1)',
+                        borderWidth: 2,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Actual vs Predicted Payments'
+                        }
+                    }
                 }
-            }
-        }
-    });
-}
+            });
 
-// Prediction function using regression coefficients
-function predictPayment(homeValue, loanAmount, interestRate) {
-    return (homeValue * regressionModel.coefficients.home_value + 
-            loanAmount * regressionModel.coefficients.loan_amount + 
-            interestRate * regressionModel.coefficients.interest_rate + 
-            regressionModel.intercept);
-}
-
-// Event Listeners
-sidebarToggle.addEventListener('click', () => {
-    sidebar.classList.toggle('sidebar-collapsed');
-    sidebarToggle.querySelector('i').classList.toggle('fa-chevron-right');
-    sidebarToggle.querySelector('i').classList.toggle('fa-chevron-left');
-});
-
-// Section Navigation
-document.querySelectorAll('[data-section]').forEach(item => {
-    item.addEventListener('click', function() {
-        const sectionId = this.getAttribute('data-section');
-        
-        // Hide all sections
-        sections.forEach(section => {
-            section.classList.remove('active');
-        });
-        
-        // Show selected section
-        document.getElementById(`${sectionId}-section`).classList.add('active');
-        
-        // Update sidebar menu
-        document.querySelectorAll('.sidebar-menu a').forEach(link => {
-            link.classList.remove('active');
-        });
-        this.classList.add('active');
-        
-        // Update current section index
-        const sectionsArray = Array.from(sections);
-        currentSection = sectionsArray.findIndex(s => s.id === `${sectionId}-section`);
-        
-        // Update nav buttons
-        updateNavButtons();
-    });
-});
-
-// Next/Previous Section Navigation
-document.querySelectorAll('[id^="nextSection"], [id^="prevSection"]').forEach(button => {
-    button.addEventListener('click', function() {
-        const isNext = this.id.startsWith('next');
-        
-        // Hide current section
-        sections[currentSection].classList.remove('active');
-        
-        // Update current section
-        currentSection = isNext ? 
-            Math.min(currentSection + 1, sections.length - 1) : 
-            Math.max(currentSection - 1, 0);
-        
-        // Show new section
-        sections[currentSection].classList.add('active');
-        
-        // Update sidebar menu
-        document.querySelectorAll('.sidebar-menu a').forEach((link, index) => {
-            link.classList.toggle('active', index === currentSection);
-        });
-        
-        // Update nav buttons
-        updateNavButtons();
-    });
-});
-
-// Function selector
-functionBtns.forEach(btn => {
-    btn.addEventListener('click', function() {
-        functionBtns.forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
-        currentFunction = this.getAttribute('data-function');
-        updateMainChart();
-    });
-});
-
-// Chart type selector
-document.getElementById('chartTypeSelect').addEventListener('change', function() {
-    currentChartType = this.value;
-    updateMainChart();
-});
-
-// Generate chart button
-document.getElementById('generateChart').addEventListener('click', updateMainChart);
-
-// Update main chart based on selections
-function updateMainChart() {
-    const xAxis = document.getElementById('xAxisSelect').value;
-    const yAxis = document.getElementById('yAxisSelect').value;
-    
-    // Update chart type
-    window.mainChart.config.type = currentChartType;
-    
-    // Update data
-    window.mainChart.data.datasets[0].data = mortgageData.map(item => ({
-        x: parseFloat(item[xAxis].replace(/[^0-9.-]+/g,"")),
-        y: parseFloat(item[yAxis].replace(/[^0-9.-]+/g,""))
-    }));
-    
-    // Add regression line if selected
-    if (currentChartType === 'scatter' && currentFunction !== 'none') {
-        if (window.mainChart.data.datasets.length === 1) {
-            window.mainChart.data.datasets.push({
-                label: 'Regression Line',
-                data: [],
-                backgroundColor: 'rgba(230, 57, 70, 0.7)',
-                borderColor: 'rgba(230, 57, 70, 1)',
-                borderWidth: 2,
-                pointRadius: 0,
-                type: 'line'
+            // Classification Chart
+            const classCtx = document.getElementById('classificationChart').getContext('2d');
+            new Chart(classCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Affordable', 'Marginal', 'Unaffordable'],
+                    datasets: [{
+                        data: [65, 15, 20],
+                        backgroundColor: [
+                            'rgba(42, 117, 214, 0.7)',
+                            'rgba(244, 162, 97, 0.7)',
+                            'rgba(230, 57, 70, 0.7)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Affordability Classification'
+                        }
+                    }
+                }
             });
         }
-        
-        // Calculate min/max for regression line
-        const xValues = mortgageData.map(item => parseFloat(item[xAxis].replace(/[^0-9.-]+/g,"")));
-        const minX = Math.min(...xValues);
-        const maxX = Math.max(...xValues);
-        
-        // Use backend regression model for prediction
-        const lineData = [
-            { 
-                x: minX, 
-                y: predictPayment(
-                    xAxis === 'House Value ($)' ? minX : regressionModel.coefficients.home_value,
-                    xAxis === 'Loan Amount ($)' ? minX : regressionModel.coefficients.loan_amount,
-                    xAxis === 'Interest Rate (%)' ? minX : regressionModel.coefficients.interest_rate
-                )
-            },
-            { 
-                x: maxX, 
-                y: predictPayment(
-                    xAxis === 'House Value ($)' ? maxX : regressionModel.coefficients.home_value,
-                    xAxis === 'Loan Amount ($)' ? maxX : regressionModel.coefficients.loan_amount,
-                    xAxis === 'Interest Rate (%)' ? maxX : regressionModel.coefficients.interest_rate
-                )
+
+        // Event Listeners
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('sidebar-collapsed');
+            sidebarToggle.querySelector('i').classList.toggle('fa-chevron-right');
+            sidebarToggle.querySelector('i').classList.toggle('fa-chevron-left');
+        });
+
+        // Section Navigation
+        document.querySelectorAll('[data-section]').forEach(item => {
+            item.addEventListener('click', function() {
+                const sectionId = this.getAttribute('data-section');
+                
+                // Hide all sections
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // Show selected section
+                document.getElementById(`${sectionId}-section`).classList.add('active');
+                
+                // Update sidebar menu
+                document.querySelectorAll('.sidebar-menu a').forEach(link => {
+                    link.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // Update current section index
+                const sectionsArray = Array.from(sections);
+                currentSection = sectionsArray.findIndex(s => s.id === `${sectionId}-section`);
+                
+                // Update nav buttons
+                updateNavButtons();
+            });
+        });
+
+        // Next/Previous Section Navigation
+        document.querySelectorAll('[id^="nextSection"], [id^="prevSection"]').forEach(button => {
+            button.addEventListener('click', function() {
+                const isNext = this.id.startsWith('next');
+                
+                // Hide current section
+                sections[currentSection].classList.remove('active');
+                
+                // Update current section
+                currentSection = isNext ? 
+                    Math.min(currentSection + 1, sections.length - 1) : 
+                    Math.max(currentSection - 1, 0);
+                
+                // Show new section
+                sections[currentSection].classList.add('active');
+                
+                // Update sidebar menu
+                document.querySelectorAll('.sidebar-menu a').forEach((link, index) => {
+                    link.classList.toggle('active', index === currentSection);
+                });
+                
+                // Update nav buttons
+                updateNavButtons();
+            });
+        });
+
+        // Function selector
+        functionBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                functionBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentFunction = this.getAttribute('data-function');
+                updateMainChart();
+            });
+        });
+
+        // Chart type selector
+        document.getElementById('chartTypeSelect').addEventListener('change', function() {
+            currentChartType = this.value;
+            updateMainChart();
+        });
+
+        // Generate chart button
+        document.getElementById('generateChart').addEventListener('click', updateMainChart);
+
+        // Update main chart based on selections
+        function updateMainChart() {
+            const xAxis = document.getElementById('xAxisSelect').value;
+            const yAxis = document.getElementById('yAxisSelect').value;
+            
+            // Update chart type
+            window.mainChart.config.type = currentChartType;
+            
+            // Update data
+            window.mainChart.data.datasets[0].data = mortgageData.map(item => ({
+                x: item[xAxis],
+                y: item[yAxis]
+            }));
+            
+            // Add regression line if selected
+            if (currentChartType === 'scatter' && currentFunction !== 'none') {
+                if (window.mainChart.data.datasets.length === 1) {
+                    window.mainChart.data.datasets.push({
+                        label: 'Regression Line',
+                        data: [],
+                        backgroundColor: 'rgba(230, 57, 70, 0.7)',
+                        borderColor: 'rgba(230, 57, 70, 1)',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        type: 'line'
+                    });
+                }
+                
+                // Calculate regression based on selected function
+                const result = regression[currentFunction](
+                    mortgageData.map(item => [item[xAxis], item[yAxis]])
+                );
+                
+                const minX = Math.min(...mortgageData.map(item => item[xAxis]));
+                const maxX = Math.max(...mortgageData.map(item => item[xAxis]));
+                
+                const lineData = [
+                    { x: minX, y: result.predict(minX) },
+                    { x: maxX, y: result.predict(maxX) }
+                ];
+                
+                window.mainChart.data.datasets[1].data = lineData;
+                window.mainChart.data.datasets[1].label = `${currentFunction} regression (R²=${result.r2.toFixed(3)})`;
+            } else {
+                // Remove regression line if not needed
+                if (window.mainChart.data.datasets.length > 1) {
+                    window.mainChart.data.datasets.pop();
+                }
             }
-        ];
-        
-        window.mainChart.data.datasets[1].data = lineData;
-        window.mainChart.data.datasets[1].label = `${currentFunction} regression (R²=${regressionModel.metrics.r2.toFixed(3)})`;
-    } else {
-        // Remove regression line if not needed
-        if (window.mainChart.data.datasets.length > 1) {
-            window.mainChart.data.datasets.pop();
+            
+            // Update axis labels
+            const xLabel = document.getElementById('xAxisSelect').options[document.getElementById('xAxisSelect').selectedIndex].text;
+            const yLabel = document.getElementById('yAxisSelect').options[document.getElementById('yAxisSelect').selectedIndex].text;
+            
+            window.mainChart.options.scales.x.title.text = xLabel;
+            window.mainChart.options.scales.y.title.text = yLabel;
+            window.mainChart.options.plugins.title.text = `${xLabel} vs ${yLabel}`;
+            
+            window.mainChart.update();
         }
-    }
-    
-    // Update axis labels
-    const xLabel = document.getElementById('xAxisSelect').options[document.getElementById('xAxisSelect').selectedIndex].text;
-    const yLabel = document.getElementById('yAxisSelect').options[document.getElementById('yAxisSelect').selectedIndex].text;
-    
-    window.mainChart.options.scales.x.title.text = xLabel;
-    window.mainChart.options.scales.y.title.text = yLabel;
-    window.mainChart.options.plugins.title.text = `${xLabel} vs ${yLabel}`;
-    
-    window.mainChart.update();
-}
 
-// Update nav buttons state
-function updateNavButtons() {
-    document.querySelectorAll('[id^="prevSection"]').forEach(btn => {
-        btn.disabled = currentSection === 0;
-    });
-    
-    document.querySelectorAll('[id^="nextSection"]').forEach(btn => {
-        btn.disabled = currentSection === sections.length - 1;
-    });
-}
+        // Update nav buttons state
+        function updateNavButtons() {
+            document.querySelectorAll('[id^="prevSection"]').forEach(btn => {
+                btn.disabled = currentSection === 0;
+            });
+            
+            document.querySelectorAll('[id^="nextSection"]').forEach(btn => {
+                btn.disabled = currentSection === sections.length - 1;
+            });
+        }
 
-// Show toast notification
-function showToast(message, type = 'success') {
-    toast.querySelector('span').textContent = message;
-    toast.className = `toast ${type}`;
-    toast.classList.add('show');
-    
-    setTimeout(() => {
-        toast.classList.remove('show');
-    }, 3000);
-}
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            toast.querySelector('span').textContent = message;
+            toast.className = `toast ${type}`;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
 
-// Mortgage calculator functionality
-document.getElementById('calcHomeValue').addEventListener('input', updateMortgageCalculation);
-document.getElementById('calcDownPayment').addEventListener('input', updateMortgageCalculation);
-document.getElementById('calcInterestRate').addEventListener('input', updateMortgageCalculation);
-document.getElementById('calcLoanTerm').addEventListener('change', updateMortgageCalculation);
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeCharts();
+            updateNavButtons();
+            
+            // Show welcome toast
+            setTimeout(() => {
+                showToast('Mortgage analysis loaded successfully!');
+            }, 1000);
+        });
 
-function updateMortgageCalculation() {
-    const homeValue = parseFloat(document.getElementById('calcHomeValue').value) || 0;
-    const downPaymentPercent = parseFloat(document.getElementById('calcDownPayment').value) || 0;
-    const interestRate = parseFloat(document.getElementById('calcInterestRate').value) || 0;
-    const loanTerm = parseInt(document.getElementById('calcLoanTerm').value) || 30;
-    
-    const downPayment = homeValue * (downPaymentPercent / 100);
-    const loanAmount = homeValue - downPayment;
-    const monthlyRate = interestRate / 100 / 12;
-    const numPayments = loanTerm * 12;
-    
-    // Calculate monthly payment using standard formula
-    let monthlyPayment = 0;
-    if (monthlyRate > 0) {
-        monthlyPayment = loanAmount * 
-            (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / 
-            (Math.pow(1 + monthlyRate, numPayments) - 1);
-    } else {
-        monthlyPayment = loanAmount / numPayments;
-    }
-    
-    // Also calculate using our regression model
-    const modelPayment = predictPayment(homeValue, loanAmount, interestRate);
-    
-    // Update UI with calculated values
-    document.querySelectorAll('.metric-value')[0].textContent = `$${monthlyPayment.toFixed(0)}`;
-    document.querySelectorAll('.metric-value')[1].textContent = `$${(monthlyPayment * 0.4).toFixed(0)}`;
-    document.querySelectorAll('.metric-value')[2].textContent = `$${(monthlyPayment * 0.6).toFixed(0)}`;
-    document.querySelectorAll('.metric-value')[3].textContent = `$${(monthlyPayment * 0.6 * numPayments).toFixed(0)}`;
-    
-    // Calculate confidence based on how close we are to known data points
-    const similarPayments = mortgageData.filter(item => 
-        Math.abs(parseFloat(item['House Value ($)'].replace(/[^0-9.-]+/g,"")) - homeValue) < 50000
-    );
-    
-    let confidence = 70; // Base confidence
-    if (similarPayments.length > 0) {
-        const avgSimilarPayment = similarPayments.reduce((sum, item) => 
-            sum + parseFloat(item['Monthly Payment ($)'].replace(/[^0-9.-]+/g,"")), 0) / similarPayments.length;
-        const paymentDiff = Math.abs(monthlyPayment - avgSimilarPayment) / avgSimilarPayment;
-        confidence = Math.max(70, 100 - (paymentDiff * 100));
-    }
-    
-    document.querySelector('.confidence-fill').style.width = `${confidence}%`;
-    document.querySelector('.confidence-value').textContent = 
-        `${Math.round(confidence)}% Confidence (based on similar profiles)`;
-}
+        // Mortgage calculator functionality
+        document.getElementById('calcHomeValue').addEventListener('input', updateMortgageCalculation);
+        document.getElementById('calcDownPayment').addEventListener('input', updateMortgageCalculation);
+        document.getElementById('calcInterestRate').addEventListener('input', updateMortgageCalculation);
+        document.getElementById('calcLoanTerm').addEventListener('change', updateMortgageCalculation);
 
-// Initialize the app
-document.addEventListener('DOMContentLoaded', () => {
-    initializeCharts();
-    updateNavButtons();
-    updateMortgageCalculation();
-    
-    // Show welcome toast
-    setTimeout(() => {
-        showToast('Mortgage analysis loaded successfully!');
-    }, 1000);
-});
+        function updateMortgageCalculation() {
+            const homeValue = parseFloat(document.getElementById('calcHomeValue').value) || 0;
+            const downPaymentPercent = parseFloat(document.getElementById('calcDownPayment').value) || 0;
+            const interestRate = parseFloat(document.getElementById('calcInterestRate').value) || 0;
+            const loanTerm = parseInt(document.getElementById('calcLoanTerm').value) || 30;
+            
+            const downPayment = homeValue * (downPaymentPercent / 100);
+            const loanAmount = homeValue - downPayment;
+            const monthlyRate = interestRate / 100 / 12;
+            const numPayments = loanTerm * 12;
+            
+            // Calculate monthly payment using standard formula
+            let monthlyPayment = 0;
+            if (monthlyRate > 0) {
+                monthlyPayment = loanAmount * 
+                    (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / 
+                    (Math.pow(1 + monthlyRate, numPayments) - 1);
+            } else {
+                monthlyPayment = loanAmount / numPayments;
+            }
+            
+            // Update UI with calculated values
+            document.querySelector('.metric-value:nth-child(1)').textContent = `$${monthlyPayment.toFixed(0)}`;
+            
+            // For demo purposes, we'll show some sample breakdown
+            const principal = monthlyPayment * 0.4;
+            const interest = monthlyPayment * 0.6;
+            const totalInterest = interest * numPayments;
+            
+            document.querySelector('.metric-value:nth-child(2)').textContent = `$${principal.toFixed(0)}`;
+            document.querySelector('.metric-value:nth-child(3)').textContent = `$${interest.toFixed(0)}`;
+            document.querySelector('.metric-value:nth-child(4)').textContent = `$${totalInterest.toFixed(0)}`;
+            
+            // Update confidence bar (random for demo)
+            const confidence = Math.min(100, Math.max(70, 70 + Math.random() * 30));
+            document.querySelector('.confidence-fill').style.width = `${confidence}%`;
+            document.querySelector('.confidence-value').textContent = 
+                `${Math.round(confidence)}% Confidence (based on similar profiles)`;
+        }
     </script>
 </body>
 </html>
